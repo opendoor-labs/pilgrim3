@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+BASEDIR=$(cd "${0%/*}/.."; pwd)
+python $BASEDIR/pilgrim3/app.py

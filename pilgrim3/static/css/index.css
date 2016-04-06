@@ -1,0 +1,44 @@
+body, html {
+  margin: 0;
+  overflow: hidden;
+  height:100%;
+}
+
+@media (min-width: 768px){
+  #left {
+    position: absolute;
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    overflow-y: scroll;
+  }
+
+  #right {
+    position: absolute;
+    top: 70px;
+    bottom: 0;
+    right: 0;
+    overflow-y: scroll;
+  }
+
+  #nav-docs {
+    position: relative;
+    overflow-y: scroll;
+  }
+}
+
+.oneof-header {
+  background: #ccc;
+}
+
+.oneof-row td:first-child {
+  background: #ccc;
+}
+
+.deprecated {
+  text-decoration: line-through;
+}
+
+.clickable {
+  cursor: pointer;    
+}

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+BASEDIR=$(cd "${0%/*}"; pwd)
+PROTO_DIR=$BASEDIR/protobuf/src
+OUT_DIR=$BASEDIR/pb
+BUNDLE_OUT=$BASEDIR/proto_bundle
+
+PROTOS=`find $PROTO_DIR -type f -name *.proto | grep -v test | grep -v ruby_generated | grep -v json_format | tr '\n' ' '`
+
+protoc -I$PROTO_DIR --include_source_info -o$BUNDLE_OUT $PROTOS
