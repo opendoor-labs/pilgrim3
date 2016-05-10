@@ -13,6 +13,8 @@ pip install pilgrim3
 
 ## Usage
 
+### Proto3
+
 Generate your protos as normal. The only difference is that you should add a couple of flags to your protoc invoation.
 
 * `--include_source_info` - This tells protoc to generate a serialized proto that includes documentation.
@@ -24,6 +26,26 @@ protoc -Imy_protos --ruby_out=./app/protos --include_source_info -o./proto_bundl
 ```
 
 The option for `-o` will output a serialized proto description of your protos. Very meta. The `--include_source_info` option tells protoc to include the source documentation. Pilgrim3 uses this output to provide you with explorable documentation.
+
+### Proto2
+
+Basically the same as proto3 but you need to perform the compilation in two stages. 
+
+Stage 1
+
+Compile your protos as normal
+
+```sh
+protoc -Imy_protos --ruby_out=./app/protos ./protos/my_protos.proto
+```
+
+Stage 2
+
+Compile your `proto_bundle` file for pilgrim to consume.
+
+```sh
+protoc -Imy_protos --include_source_info --descriptor_set_out=./proto_bundle ./protos/my_protos.proto
+```
 
 ### Running Pilgrim
 
