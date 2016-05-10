@@ -42524,22 +42524,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-
-	exports.default = function (state) {
-	  if (fetchPromise) return fetchPromise;
-
-	  var google = fetchProtos('/google/proto-bundle').then(function (response) {
-	    handleFileSet(state, response.jsonData);
-	  });
-
-	  var local = fetchProtos('/local/proto-bundle').then(function (localResponse) {
-	    handleFileSet(state, localResponse.jsonData);
-	  });
-
-	  fetchPromise = Promise.all([google, local]);
-
-	  return fetchPromise;
-	};
+	exports.default = fetchProtos;
 
 	__webpack_require__(469);
 
@@ -42549,7 +42534,23 @@
 
 	var fetchPromise = void 0;
 
-	var fetchProtos = (0, _httpClient.createFetch)((0, _httpClient.base)('http://localhost:9151'), (0, _httpClient.accept)('application/json'), (0, _httpClient.parseJSON)());
+	var fetchProtosFetch = (0, _httpClient.createFetch)((0, _httpClient.base)('http://localhost:9151'), (0, _httpClient.accept)('application/json'), (0, _httpClient.parseJSON)());
+
+	function fetchProtos(state) {
+	  if (fetchPromise) return fetchPromise;
+
+	  //let google = fetchProtosFetch('/google/proto-bundle').then((response) => {
+	  //  handleFileSet(state, response.jsonData);
+	  //});
+
+	  var local = fetchProtosFetch('/local/proto-bundle').then(function (localResponse) {
+	    handleFileSet(state, localResponse.jsonData);
+	  });
+
+	  fetchPromise = Promise.all([local]);
+
+	  return fetchPromise;
+	}
 
 	function handleFileSet(state, fileset) {
 	  state.byFile = state.byFile || {};
