@@ -5,7 +5,6 @@ import { forEach, filter, matches } from 'lodash';
 let fetchPromise;
 
 const fetchProtosFetch = createFetch(
-  base('http://localhost:9151'),
   accept('application/json'),
   parseJSON()
 );
