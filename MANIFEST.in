@@ -1,0 +1,2 @@
+include *.txt *.ini *.cfg *.rst *.md
+recursive-include pilgrim3 *.ico *.png *.css *.gif *.jpg *.txt *.js *.html *.eot *.svg *.ttf *.woff *.otf *.csv *.py *.gz *.pdf *.json INFO *.mako proto_bundle
