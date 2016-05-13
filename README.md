@@ -52,7 +52,7 @@ protoc -Imy_protos --include_source_info --descriptor_set_out=./proto_bundle ./p
 Navigate over to the directory that has your `proto_bundle` file that you generated when ran `protoc`.
 
 ```sh
-pilgrim3
+pilgrim3 --proto-bundle=./protob_bundle
 ```
 
 Open pilgrim3 on your localhost at [http://localhost:9151](http://localhost:9151)
