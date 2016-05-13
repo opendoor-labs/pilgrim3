@@ -1,20 +1,20 @@
 import React from 'react';
-import { Col } from 'react-bootstrap'
+import { Col } from 'react-bootstrap';
 
-import fetchProtos from './fetchProtos'
-import state from './state'
-import NavBar from './navbar'
-import SideBar from './sideBar'
+import fetchProtos from './fetchProtos';
+import state from './state';
+import NavBar from './navbar';
+import SideBar from './sideBar';
 
 export default React.createClass({
   getInitialState: function() {
-    return { loaded: false, errors: false }
+    return { loaded: false, errors: false };
   },
 
   componentDidMount: function() {
     fetchProtos(state).then(
       () => {
-        this.setState({loaded: true, errors: false})
+        this.setState({loaded: true, errors: false});
       },
       (errs) => {
         let theErrors = errs;

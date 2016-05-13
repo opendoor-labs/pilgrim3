@@ -27,6 +27,7 @@ export default function fetchProtos(state) {
 
 function handleFileSet(state, fileset) {
   state.byFile = state.byFile || {};
+  window.state = state;
 
   forEach(fileset.file, (file) => {
     fileDocs(file);

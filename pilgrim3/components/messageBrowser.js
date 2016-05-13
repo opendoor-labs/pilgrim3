@@ -1,11 +1,11 @@
-import React from 'react'
-import state from './state'
-import { Link } from 'react-router'
-import { map, forEach, isNumber, find } from 'lodash'
-import { relativeName } from './utils'
-import ProtoInfo from './protoInfo'
-import DocBlock from './docBlock'
-import OptionsPopover from './optionsPopover'
+import React from 'react';
+import state from './state';
+import { Link } from 'react-router';
+import { map, forEach, isNumber, find } from 'lodash';
+import { relativeName } from './utils';
+import ProtoInfo from './protoInfo';
+import DocBlock from './docBlock';
+import OptionsPopover from './optionsPopover';
 
 const COLORS = [
   '#CEF6CE',
@@ -64,7 +64,7 @@ export default class MessageBrowser extends React.Component {
           </tbody>
         </table>
       </div>
-    )
+    );
   }
 
   renderFieldRows(fields, msg) {
