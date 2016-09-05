@@ -9,7 +9,7 @@ long_desc = "Long description"
 install_requires = [
     'flask==0.10.1',
     'click==6.6',
-    'protobuf==3.0.0b2.post2',
+    'protobuf==3.0.0',
     'Flask-CORS==2.1.2'
 ]
 
@@ -44,7 +44,7 @@ setup(
     author='Opendoor',
     author_email='developers@opendoor.com',
     url='https://github.com/opendoor-labs/pilgrim3',
-    keywords='protobug visualizer',
+    keywords='protobuf visualizer',
     packages=find_packages(),
     dependency_links=dependency_links,
     include_package_data=True,
