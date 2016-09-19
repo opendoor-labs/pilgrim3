@@ -11,6 +11,12 @@ Pilgrim 3 is a simply python server that runs on you local machine, against your
 pip install pilgrim3
 ```
 
+Or install from source. Clone the repo and cd into the directory.
+
+```sh
+python setup.py install
+```
+
 ## Usage
 
 ### Proto3
