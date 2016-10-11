@@ -1,5 +1,7 @@
 import os
 from setuptools import setup, find_packages
+from setuptools.command.build_py import build_py as _build_py
+from subprocess import call
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -24,6 +26,12 @@ develop_requires = [
 dependency_links = [
 ]
 
+class build_py(_build_py):
+    def run(self):
+        result = call('script/bundle_js')
+        if result != 0:
+            raise OSError("Could not compile javascript.  Make script/bundle_js works from root directory.")
+        _build_py.run(self)
 
 setup(
     name='pilgrim3',
@@ -55,6 +63,7 @@ setup(
         'dev': develop_requires,
         'test': tests_require,
     },
+    cmdclass={'build_py': build_py},
     entry_points="""\
     [console_scripts]
         pilgrim3 = pilgrim3.scripts.run:main
