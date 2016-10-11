@@ -82,7 +82,8 @@ export default class MessageBrowser extends React.Component {
 
           rows.push(
             <tr className='oneof-header' key={`one-of-${msg.fullName}-${currentOneOfIdx}`} style={style}>
-              <th colSpan={7}><h5>{msg.oneofDecl[currentOneOfIdx].name}</h5></th>
+              <th colSpan={6}><h5>{msg.oneofDecl[currentOneOfIdx].name}</h5></th>
+              <td colSpan={1}><DocBlock docs={msg.oneofDecl[currentOneOfIdx].documentation}/></td>
             </tr>
           );
         }

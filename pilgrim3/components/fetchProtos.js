@@ -16,7 +16,7 @@ export default function fetchProtos(state) {
   //  handleFileSet(state, response.jsonData);
   //});
 
-  let local = fetchProtosFetch('/local/proto-bundle').then((localResponse) => {
+  var local = fetchProtosFetch('/local/proto-bundle').then((localResponse) => {
     handleFileSet(state, localResponse.jsonData);
   });
 
@@ -128,10 +128,12 @@ function attachDocs(thing, docs) {
   if(docString) thing.documentation = docString;
 }
 
+// locs = local docs
 function messageDocs(msg, locs, path) {
   let fieldsPath = path.concat(2);
   let nestedTypePath = path.concat(3);
   let enumTypePath = path.concat(4);
+  let oneOfPath = path.concat(8);
 
   forEach(msg.field, (field, i) => {
     let docs = pathDocs(fieldsPath.concat(i), locs)[0];
@@ -146,6 +148,11 @@ function messageDocs(msg, locs, path) {
   forEach(msg.enumType, (enumType, i) => {
     let docs = pathDocs(enumTypePath.concat(i), locs)[0];
     attachDocs(enumType, docs);
+  });
+
+  forEach(msg.oneofDecl, (oneOf, i) => {
+    let docs = pathDocs(oneOfPath.concat(i), locs)[0];
+    attachDocs(oneOf, docs);
   });
 }
 
