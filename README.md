@@ -76,7 +76,7 @@ git submodule update --init --recursive
 Start the javascript compiler from the project root:
 
 ```sh
-npm start & $1$2>foo.txt
+npm start
 ```
 
 The `npm start` will re-build the Javascript as you go.
