@@ -142,7 +142,7 @@ function messageDocs(msg, locs, path) {
 
   forEach(msg.nestedType, (nestedMsg, i) => {
     let docs = pathDocs(nestedTypePath.concat(i), locs)[0];
-    attachDocs(nestedTypePath, docs);
+    attachDocs(nestedMsg, docs);
   });
 
   forEach(msg.enumType, (enumType, i) => {

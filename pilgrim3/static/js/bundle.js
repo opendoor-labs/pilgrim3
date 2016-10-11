@@ -43573,7 +43573,7 @@
 
 	  (0, _lodash.forEach)(msg.nestedType, function (nestedMsg, i) {
 	    var docs = pathDocs(nestedTypePath.concat(i), locs)[0];
-	    attachDocs(nestedTypePath, docs);
+	    attachDocs(nestedMsg, docs);
 	  });
 
 	  (0, _lodash.forEach)(msg.enumType, function (enumType, i) {
