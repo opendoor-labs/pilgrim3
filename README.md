@@ -65,7 +65,7 @@ Open pilgrim3 on your localhost at [http://localhost:9151](http://localhost:9151
 
 ## Development
 
-When developing pilgrim.
+Clone the repo:
 
 ```sh
 git clone git@github.com:opendoor-labs/pilgrim3.git
@@ -73,10 +73,19 @@ cd pilgrim3
 git submodule update --init --recursive
 ```
 
-You'll likely want to start the javascript builder. 
+Start the javascript compiler from the project root:
 
 ```sh
-npm start
+npm start & $1$2>foo.txt
 ```
 
-Head on over to an directory that has a proto\_bundle file and go for it. The `npm start` will re-build the Javascript as you go.
+The `npm start` will re-build the Javascript as you go.
+
+Start a local server from the project root:
+```sh
+python -m pilgrim3.scripts.run pilgrim3/scripts/run.py --proto-bundle=path-to-proto-bundle
+
+```
+
+There is a hello-world proto bundle to practice at at `dev/proto3/pilgrim-bundle`
+
