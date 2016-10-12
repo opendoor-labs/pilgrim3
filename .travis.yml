@@ -1,0 +1,5 @@
+install:
+  - pip install
+  - npm install
+before_script: bin/bundle_js
+script: bin/test

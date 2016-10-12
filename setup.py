@@ -28,7 +28,7 @@ dependency_links = [
 
 class build_py(_build_py):
     def run(self):
-        result = call('script/bundle_js')
+        result = call('bin/bundle_js')
         if result != 0:
             raise OSError("Could not compile javascript.  Make script/bundle_js works from root directory.")
         _build_py.run(self)
