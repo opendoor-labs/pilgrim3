@@ -13,15 +13,11 @@ const fetchProtosFetch = createFetch(
 export default function fetchProtos(state) {
   if (fetchPromise) return fetchPromise;
 
-  //let google = fetchProtosFetch('/google/proto-bundle').then((response) => {
-  //  handleFileSet(state, response.jsonData);
-  //});
-
-  var local = fetchProtosFetch('/local/proto-bundle').then((localResponse) => {
-    handleFileSet(state, localResponse.jsonData);
-  });
-
-  fetchPromise = Promise.all([local]);
+  fetchPromise = Promise.all([
+      fetchProtosFetch('/local/proto-bundle').then((localResponse) => {
+        handleFileSet(state, localResponse.jsonData);
+      })
+  ]);
 
   return fetchPromise;
 }
@@ -131,6 +127,24 @@ function attachDocs(thing, docs) {
 
 // locs = local docs
 function messageDocs(msg, locs, path) {
+  // Each of these numbers come from the file descriptor google protobuf definition.
+  // Since enums can have recursive messages which can have recursive enums etc, the location structure is like this:
+  // location: [TokenType, TokenIndex].  The token index is simply to support multiple tokens inside of a scope, i.e.
+  // message Foo {
+  //   message Bar {
+  //     enum Baz1 {
+  //     }
+  //     enum Baz2 {
+  //     }
+  //   }
+  // }
+  //
+  // The location for Foo is [4, 0]
+  // The location for Bar is [4, 0, 3, 0]
+  // The location for Baz1 is [4, 0, 3, 0, 4, 0]
+  // The location for Baz2 is [4, 0, 3, 0, 4, 1]
+  //
+  // NB: enums and messages share the same position... need to find out more
   let fieldsPath = path.concat(2);
   let nestedTypePath = path.concat(3);
   let enumTypePath = path.concat(4);
