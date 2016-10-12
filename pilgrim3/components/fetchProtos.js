@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import 'whatwg-fetch';
 import { createFetch, base, accept, parseJSON } from 'http-client';
 import { forEach, filter, matches } from 'lodash';
 

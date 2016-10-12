@@ -130,6 +130,7 @@ export default class FileBrowser extends React.Component {
             </div>
           </div>
         </div>
+        <div id="test-done"></div>
       </div>
     );
   }

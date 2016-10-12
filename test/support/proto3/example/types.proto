@@ -1,4 +1,6 @@
 // Comments in this doc are asserted in tests, do not change
+
+/* file-comment */
 syntax = "proto3";
 
 package example;

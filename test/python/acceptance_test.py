@@ -8,6 +8,11 @@ import httplib
 from flask import request
 import logging
 
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 FAIL = '\033[91m'
 ENDC = '\033[0m'
 
@@ -54,7 +59,7 @@ class CommentTestCase(unittest.TestCase):
     def redirect_app_logs(cls, filepath):
         log_names = ['werkzeug']
         app_logs = map(lambda logname: logging.getLogger(logname), log_names)
-        file_handler = logging.FileHandler('log/app.test.log', 'w')
+        file_handler = logging.FileHandler('log/app.test.log', 'w+')
 
         for app_log in app_logs:
             for hdlr in app_log.handlers[:]:  # remove all old handlers
@@ -81,12 +86,27 @@ class CommentTestCase(unittest.TestCase):
             print FAIL + "Unable to gracefully shutdown server"
             print "Resources may not have been released" + ENDC
 
+    def setUp(self):
+        self.driver = webdriver.PhantomJS(service_log_path='log/ghostdriver.log')
+        self.driver.set_window_size("1120", "550")
+
+    def tearDown(self):
+        self.driver.quit()
+
     def get(self, url):
-        self.__class__.client.request("GET", url)
-        return self.__class__.client.getresponse().read()
+        request = 'http://localhost:9151' + url
+        self.driver.get(request)
+        try:
+            WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.ID, "test-done")))
+            result = self.driver.find_element(By.TAG_NAME, 'body').text
+            return result
+        except Exception as e:
+            # logs = self.driver.get_log("har")
+            # logs = self.driver.get_log("browser")
+            screenshot_loc = "log/%f.png" % time.time()
+            print('error ocured while using selenium, see ' + screenshot_loc)
+            self.driver.save_screenshot(screenshot_loc)
+            raise e
 
-    def test_message(self):
-        self.get("/booted")
-
-    def test_another(self):
-        self.assertTrue(1);
+    def test_file_comment(self):
+        self.assertIn("file-comment", self.get("/#/files/example/types.proto"))
