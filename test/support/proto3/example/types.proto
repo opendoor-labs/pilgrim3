@@ -1,0 +1,48 @@
+// Comments in this doc are asserted in tests, do not change
+
+/* file-comment */
+syntax = "proto3";
+
+package example;
+
+/* message-comment */
+message Message {
+    /* message-field-comment */
+    string field = 1;
+
+    /* message-oneof-comment */
+    oneof one_of {
+      /* message-oneof-field[0]-comment */
+      string field2 = 2;
+      /* message-oneof-field[1]-comment */
+      string field3 = 3;
+    }
+}
+
+/* enum-comment */
+enum Enum {
+    /* enum-val[0]-comment */
+    val1 = 0;
+    /* enum-val[1]-comment */
+    val2 = 1;
+}
+
+message NestingScope {
+    /* nested-message-comment */
+    message NestedMessage {
+    }
+
+    /* nested-enum-comment */
+    enum NestedEnum {
+        /* nested-enum-val[0]-comment */
+        val1 = 0;
+        /* nested-enum-val[1]-comment */
+        val2 = 1;
+    }
+}
+
+/* service-comment */
+service Service {
+    /* action-comment */
+    rpc doAction (Message) returns (NestingScope) {}
+}
