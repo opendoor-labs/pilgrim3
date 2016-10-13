@@ -10,4 +10,4 @@ install:
   - test/support/proto3/compile
 script: bin/test
 env:
-  - PROTOC_EXE=protoc/bin/protoc
+  - PROTOC_EXE=${TRAVIS_BUILD_DIR}/protoc/bin/protoc
