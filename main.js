@@ -4,8 +4,8 @@ import { Router, Route, hashHistory, IndexRoute } from 'react-router'
 import App from './pilgrim3/components/app'
 import FileBrowser from './pilgrim3/components/fileBrowser'
 import ServiceBrowser from './pilgrim3/components/serviceBrowser'
-import MessageBrowser from './pilgrim3/components/MessageBrowser'
-import EnumBrowser from './pilgrim3/components/EnumBrowser'
+import MessageBrowser from './pilgrim3/components/messageBrowser'
+import EnumBrowser from './pilgrim3/components/enumBrowser'
 import fetchProtos from './pilgrim3/components/fetchProtos'
 
 class Empty extends React.Component {
