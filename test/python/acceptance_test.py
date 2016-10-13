@@ -55,6 +55,7 @@ class CommentTestCase(unittest.TestCase):
                 client.getresponse()
             except (httplib.CannotSendRequest, socket_error):
                 time.sleep(0.1)
+                retry_count = retry_count + 1
                 if retry_count < 100:  # 10 seconds
                     continue
             break
@@ -107,9 +108,20 @@ class CommentTestCase(unittest.TestCase):
         except Exception as e:
             # logs = self.driver.get_log("har")
             # logs = self.driver.get_log("browser")
-            screenshot_loc = "log/%f.png" % time.time()
-            print('error ocured while using selenium, see ' + screenshot_loc)
-            self.driver.save_screenshot(screenshot_loc)
+            # screenshot_loc = "log/%f.png" % time.time()
+            # print('error ocured while using selenium, see ' + screenshot_loc)
+            # self.driver.save_screenshot(screenshot_loc)
+            print(e)
+            print("**** App Logs ****")
+            f = open("log/app.test.log", "r")
+            print(f.read())
+            f.close
+            print("******************")
+            print("*** Phantom JS ***")
+            f = open("log/ghostdriver.log", "r")
+            print(f.read())
+            f.close
+            print("******************")
             raise e
 
     def test_file_comment(self):
