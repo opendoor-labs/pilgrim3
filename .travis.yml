@@ -1,9 +1,13 @@
+sudo: required
 language: python
 python:
   - "2.7"
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y protobuf-compiler
 install:
   - npm install
   - pip install -e .
   - pip install pilgrim3[test]
-before_script: bin/bundle_js
+  - test/support/proto3/compile
 script: bin/test
