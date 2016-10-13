@@ -1,6 +1,6 @@
 # Pilgrim 3
 
-[![Build status](https://api.travis-ci.org/opendoor-labs/pilgrim3.svg?branch=master)]
+![Build status](https://api.travis-ci.org/opendoor-labs/pilgrim3.svg?branch=master)
 
 Pilgrim 3 provides a way to explore your proto files using a web browser. (proto version 3)
 It uses protoc, the official compilation software and provides you access to files, messages services enums along with documentation to each type of object defined.
