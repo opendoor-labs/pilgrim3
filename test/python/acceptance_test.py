@@ -4,9 +4,11 @@ import os
 import time
 from pilgrim3.app import app
 from threading import Thread
-import httplib
 from flask import request
 import logging
+
+import httplib
+from socket import error as socket_error
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -46,13 +48,15 @@ class CommentTestCase(unittest.TestCase):
 
     @classmethod
     def wait_for_boot(cls, client):
+        retry_count = 0
         while True:
             try:
                 client.request("GET", "/booted")
                 client.getresponse()
-            except httplib.CannotSendRequest:
+            except (httplib.CannotSendRequest, socket_error):
                 time.sleep(0.1)
-                continue
+                if retry_count < 100:  # 10 seconds
+                    continue
             break
 
     @classmethod
