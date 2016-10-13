@@ -86,7 +86,7 @@ class CommentTestCase(unittest.TestCase):
         except httplib.CannotSendRequest:
             print FAIL + "Error shutting down" + ENDC
 
-        cls.server.join(5)
+        cls.server.join(1)
         if cls.server.is_alive():
             print FAIL + "Unable to gracefully shutdown server"
             print "Resources may not have been released" + ENDC
@@ -102,7 +102,7 @@ class CommentTestCase(unittest.TestCase):
         request = 'http://localhost:9151' + url
         self.driver.get(request)
         try:
-            WebDriverWait(self.driver, 25).until(EC.presence_of_element_located((By.ID, "test-done")))
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "test-done")))
             result = self.driver.find_element(By.TAG_NAME, 'body').text
             return result
         except Exception as e:
