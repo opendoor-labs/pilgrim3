@@ -3,6 +3,7 @@ python:
   - "2.7"
 install:
   - npm install
-  - pip install .
+  - pip install -e .
+  - pip install pilgrim3[test]
 before_script: bin/bundle_js
 script: bin/test

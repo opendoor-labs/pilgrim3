@@ -16,6 +16,7 @@ install_requires = [
 ]
 
 tests_require = [
+    'selenium==2.53.6'
 ]
 
 
