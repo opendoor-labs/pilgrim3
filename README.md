@@ -89,6 +89,10 @@ python -m pilgrim3.scripts.run pilgrim3/scripts/run.py --proto-bundle=path-to-pr
 
 ```
 
+### Running Tests
+
+python setup.py test
+
 There is a hello-world proto bundle to practice at at `dev/proto3/pilgrim-bundle`
 
 ## Dependencies
