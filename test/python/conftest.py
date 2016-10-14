@@ -101,7 +101,7 @@ def server_did_boot(server_thread, client):
         except (httplib.CannotSendRequest, socket_error):
             time.sleep(0.1)
             retry_count = retry_count + 1
-            if retry_count < 100:  # 10 seconds
+            if retry_count < 200:  # 20 seconds
                 continue
         break
     yield booted
