@@ -20,7 +20,7 @@ ENDC = '\033[0m'
 
 @fixture(scope="session")
 def port():
-    yield 9151
+    yield webdriver.common.utils.free_port()
 
 
 @fixture(scope="session")
@@ -38,11 +38,11 @@ def timeout():
     yield 10
 
 
-@fixture()
+@fixture(scope="session")
 def app_log_path():
     yield "log/app.test.log"
 
-@fixture()
+@fixture(scope="session")
 def ghostdriver_log_path():
     yield "log/ghostdriver.log"
 
@@ -101,7 +101,7 @@ def server_did_boot(server_thread, client):
         except (httplib.CannotSendRequest, socket_error):
             time.sleep(0.1)
             retry_count = retry_count + 1
-            if retry_count < 100:  # 10 seconds
+            if retry_count < 200:  # 20 seconds
                 continue
         break
     yield booted
@@ -121,12 +121,11 @@ def set_app_log(app_log_path):
         app_log.addHandler(file_handler)
 
 
-@fixture()
+@fixture(scope="module")
 def driver(ghostdriver_log_path):
     driver = webdriver.PhantomJS(service_log_path=ghostdriver_log_path)
     driver.set_window_size("1120", "550")
     yield driver
-    print("Tearing down")
     driver.quit()
 
 @fixture()

@@ -69,6 +69,7 @@ export default class FileBrowser extends React.Component {
 
     let file = state.byFile[key];
 
+    // TODO(daicoden) replace test-done with template mechanism, tests will use it to inject this data, others can use it to styleize page
     return (
       <div className='panel panel-default'>
         <div className='panel-heading'>
