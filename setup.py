@@ -20,7 +20,7 @@ install_requires = [
 tests_require = [
     'selenium==2.53.6',
     'pytest==3.0.3',
-    'py=1.4.31'
+    'py==1.4.31'
 ]
 
 
