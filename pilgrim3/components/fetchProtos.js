@@ -29,7 +29,7 @@ function handleFileSet(state, fileset) {
   forEach(fileset.file, (file) => {
     fileDocs(file);
     state.byFile[file.name] = file;
-    let thingName = `.${file.package}`;
+    let thingName = `${file.package}`;
 
     mapAllTheThings(state, file, file, thingName, []);
   });

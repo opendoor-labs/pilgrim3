@@ -59,7 +59,7 @@ def file_proto_page(navigator):
 @fixture()
 def message_proto_page(navigator):
     if 'message_proto' not in memoization:
-        memoization['message_proto'] = navigator.get_page('/#/messages/.example.Message')
+        memoization['message_proto'] = navigator.get_page('/#/messages/example.Message')
     yield memoization['message_proto']
 
 
