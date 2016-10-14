@@ -141,3 +141,13 @@ def driver(ghostdriver_log_path):
 @fixture()
 def debug_logs(app_log_path, ghostdriver_log_path):
     yield (("App Log", app_log_path), ("PhantomJS Log", ghostdriver_log_path))
+
+@fixture
+def print_debug_func(debug_logs):
+    def print_logs():
+        for debug_log in debug_logs:
+            print("**** %s ****" % debug_log[0])
+            with open(debug_log[1], "r") as f:
+                print(f.read())
+            print("******************")
+    yield print_logs
