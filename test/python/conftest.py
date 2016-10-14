@@ -20,7 +20,7 @@ ENDC = '\033[0m'
 
 @fixture(scope="session")
 def port():
-    yield 9151
+    yield webdriver.common.utils.free_port()
 
 
 @fixture(scope="session")
@@ -126,7 +126,6 @@ def driver(ghostdriver_log_path):
     driver = webdriver.PhantomJS(service_log_path=ghostdriver_log_path)
     driver.set_window_size("1120", "550")
     yield driver
-    print("Tearing down")
     driver.quit()
 
 @fixture()
