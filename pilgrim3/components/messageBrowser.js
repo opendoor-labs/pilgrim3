@@ -31,12 +31,14 @@ export default class MessageBrowser extends React.Component {
   }
 
   renderMessage(msg) {
+    // TODO(daicoden) replace test-done with template mechanism, tests will use it to inject this data, others can use it to styleize page
     return (
       <div>
         <h1>{msg.name}<OptionsPopover placement='right' obj={msg} /></h1>
         <DocBlock docs={msg.documentation}/>
         <ProtoInfo infoObject={msg}/>
         {this.renderFields(msg)}
+        <div id="test-done"></div>
       </div>
     );
   }

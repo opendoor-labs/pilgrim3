@@ -1,4 +1,5 @@
 from pytest import fixture
+from pytest import mark
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -43,5 +44,33 @@ def navigator(server_did_boot, driver, test_host, timeout, debug_logs):
     yield Navigator(driver, test_host, timeout, debug_logs)
 
 
-def test_file_comment(navigator):
-    assert 'file-comment' in navigator.get_page("/#/files/example/types.proto")
+memoization = {}
+
+
+@fixture()
+def file_proto_page(navigator):
+    if 'file_proto' not in memoization:
+        memoization['file_proto'] = navigator.get_page('/#/files/example/types.proto')
+    yield memoization['file_proto']
+
+
+@fixture()
+def message_proto_page(navigator):
+    if 'message_proto' not in memoization:
+        memoization['message_proto'] = navigator.get_page('/#/messages/.example.Message')
+    yield memoization['message_proto']
+
+
+def test_file_comment(file_proto_page):
+    assert 'file-comment' in file_proto_page
+
+
+@mark.parametrize("comment_string", [
+    ("message-comment"),
+    ("message-field-comment"),
+    ("message-oneof-comment"),
+    ("message-oneof-field[0]-comment"),
+    ("message-oneof-field[1]-comment"),
+])
+def test_message_comment(comment_string, message_proto_page):
+    assert comment_string in message_proto_page

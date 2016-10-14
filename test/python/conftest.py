@@ -38,11 +38,11 @@ def timeout():
     yield 10
 
 
-@fixture()
+@fixture(scope="session")
 def app_log_path():
     yield "log/app.test.log"
 
-@fixture()
+@fixture(scope="session")
 def ghostdriver_log_path():
     yield "log/ghostdriver.log"
 
@@ -121,7 +121,7 @@ def set_app_log(app_log_path):
         app_log.addHandler(file_handler)
 
 
-@fixture()
+@fixture(scope="module")
 def driver(ghostdriver_log_path):
     driver = webdriver.PhantomJS(service_log_path=ghostdriver_log_path)
     driver.set_window_size("1120", "550")
