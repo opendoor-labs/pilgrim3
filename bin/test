@@ -1,3 +1,5 @@
 #!/usr/bin/env sh
 
-python -m unittest discover ./test/  "*_test.py"
+bin/bundle_js
+test/support/proto3/compile
+python setup.py test
