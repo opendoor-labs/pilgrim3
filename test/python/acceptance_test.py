@@ -26,22 +26,24 @@ class Navigator():
             WebDriverWait(self.driver, self.timeout).until(EC.presence_of_element_located((By.ID, "test-done")))
             return self.driver.find_element(By.TAG_NAME, 'body').text
         except Exception as e:
-            print("error occurred on page, see logs below")
-            print(e)
-
-            for debug_log in self.debug_logs:
-                print("**** %s ****" % debug_log[0])
-                with open(debug_log[1], "r") as f:
-                    print(f.read())
-                print("******************")
+            print_logs(self.debug_logs)
 
             raise e
 
+def print_logs(debug_logs):
+    for debug_log in debug_logs:
+        print("**** %s ****" % debug_log[0])
+        with open(debug_log[1], "r") as f:
+            print(f.read())
+        print("******************")
 
 @fixture()
 def navigator(server_did_boot, driver, test_host, timeout, debug_logs):
-    assert server_did_boot, "server did not start up"
-    yield Navigator(driver, test_host, timeout, debug_logs)
+    if server_did_boot:
+        yield Navigator(driver, test_host, timeout, debug_logs)
+    else:
+        print_logs(debug_logs)
+        assert server_did_boot, "server did not start up"
 
 
 memoization = {}
