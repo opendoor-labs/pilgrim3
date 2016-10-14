@@ -1,14 +1,12 @@
-import os, sys
 from setuptools import setup, find_packages
 from setuptools.command.build_py import build_py as _build_py
 from subprocess import call
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'test')))
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-short_desc = "Short description"
-long_desc = "Long description"
+short_desc = "API browser for proto based API definitions"
+long_desc = "Protos are a great way to communicate APIs, even if not using the protobuf serilization format. " \
+            "JSON, xml, etc can still be used.  Proto files allow tools to be built around your APIs by " \
+            "accessing the metadata.  Pilgrim uses that data to build a 1st class API documentation tool " \
+            "which will always be correct (since it's the real schema!)"
 
 install_requires = [
     'flask==0.10.1',
