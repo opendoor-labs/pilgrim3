@@ -35,7 +35,7 @@ def test_host(hostname, port):
 
 @fixture(scope="session")
 def timeout():
-    yield 5
+    yield 10
 
 
 @fixture()
