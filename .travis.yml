@@ -6,7 +6,7 @@ before_install:
   - bin/get-phantomjs
 install:
   - npm install
-  - pip install -e .
+  - pip install
   - pip install pilgrim3[test]
 script: bin/test
 env:
