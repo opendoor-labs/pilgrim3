@@ -35,8 +35,12 @@ def test_host(hostname, port):
 
 @fixture(scope="session")
 def timeout():
-    yield 10
+    yield 5
 
+# Boot timeout can be really low because we retry many times
+@fixture(scope="session")
+def boot_timeout():
+    yield 0.1
 
 @fixture(scope="session")
 def app_log_path():
@@ -68,12 +72,12 @@ def app():
 
 
 @fixture(scope="session")
-def server_thread(app, hostname, port, client):
+def server_thread(app, hostname, port, client_provider):
     server = Thread(target=lambda: app.run(host=hostname, port=port, threaded=True))
     server.daemon = True
     yield server
     try:
-        client.request("GET", "/shutdown")
+        client_provider().request("GET", "/shutdown")
     except (httplib.CannotSendRequest, socket_error):
         print FAIL + "Error shutting down" + ENDC
 
@@ -83,22 +87,26 @@ def server_thread(app, hostname, port, client):
         print "Resources may not have been released" + ENDC
 
 
+# use a provider to make connection to server after it has been booted
 @fixture(scope="session")
-def client(hostname, port, timeout):
-    yield httplib.HTTPConnection(hostname, port, timeout=timeout)
-
+def client_provider(hostname, port, timeout):
+    def get():
+        return httplib.HTTPConnection(hostname, port, timeout=timeout)
+    yield get
 
 @fixture(scope="session")
-def server_did_boot(server_thread, client):
+def server_did_boot(server_thread, hostname, port, boot_timeout):
     server_thread.start()
     retry_count = 0
     booted = False
     while True:
         try:
-            client.request("GET", "/booted")
-            client.getresponse()
+            boot_client = httplib.HTTPConnection(hostname, port, timeout=boot_timeout)
+            boot_client.request("GET", "/booted")
+            boot_client.getresponse()
             booted = True
         except (httplib.CannotSendRequest, socket_error):
+            print "error trying to startup:, connecting again"
             time.sleep(0.1)
             retry_count = retry_count + 1
             if retry_count < 200:  # 20 seconds
