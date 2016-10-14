@@ -1,7 +1,9 @@
-import os
+import os, sys
 from setuptools import setup, find_packages
 from setuptools.command.build_py import build_py as _build_py
 from subprocess import call
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'test')))
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -16,7 +18,9 @@ install_requires = [
 ]
 
 tests_require = [
-    'selenium==2.53.6'
+    'selenium==2.53.6',
+    'pytest==3.0.3',
+    'py==1.4.31'
 ]
 
 
@@ -59,6 +63,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
+    setup_requires=['pytest-runner'],
     tests_require=tests_require,
     extras_require={
         'dev': develop_requires,
