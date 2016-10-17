@@ -1,18 +1,14 @@
+from flask import request
+from pilgrim3.app import app as pilgrim_app
 from pytest import fixture
-
-import os
+from selenium import webdriver
+from socket import error as socket_error
 from threading import Thread
 
-import time
-import logging
-
 import httplib
-from socket import error as socket_error
-
-from pilgrim3.app import app as pilgrim_app
-from flask import request
-
-from selenium import webdriver
+import logging
+import os
+import time
 
 FAIL = '\033[91m'
 ENDC = '\033[0m'
@@ -37,14 +33,17 @@ def test_host(hostname, port):
 def timeout():
     yield 5
 
+
 # Boot timeout can be really low because we retry many times
 @fixture(scope="session")
 def boot_timeout():
     yield 0.1
 
+
 @fixture(scope="session")
 def app_log_path():
     yield "log/app.test.log"
+
 
 @fixture(scope="session")
 def ghostdriver_log_path():
@@ -92,7 +91,9 @@ def server_thread(app, hostname, port, client_provider):
 def client_provider(hostname, port, timeout):
     def get():
         return httplib.HTTPConnection(hostname, port, timeout=timeout)
+
     yield get
+
 
 @fixture(scope="session")
 def server_did_boot(server_thread, hostname, port, boot_timeout):
@@ -136,6 +137,17 @@ def driver(ghostdriver_log_path):
     yield driver
     driver.quit()
 
+
 @fixture()
 def debug_logs(app_log_path, ghostdriver_log_path):
     yield (("App Log", app_log_path), ("PhantomJS Log", ghostdriver_log_path))
+
+@fixture
+def print_debug_func(debug_logs):
+    def print_logs():
+        for debug_log in debug_logs:
+            print("**** %s ****" % debug_log[0])
+            with open(debug_log[1], "r") as f:
+                print(f.read())
+            print("******************")
+    yield print_logs
