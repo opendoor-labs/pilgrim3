@@ -1,22 +1,22 @@
 import 'babel-polyfill';
 import 'whatwg-fetch';
-import { createFetch, base, accept, parseJSON } from 'http-client';
-import { forEach, filter, matches } from 'lodash';
+import {createFetch, base, accept, parseJSON} from 'http-client';
+import {forEach, filter, matches} from 'lodash';
 
 let fetchPromise;
 
 const fetchProtosFetch = createFetch(
-  accept('application/json'),
-  parseJSON()
+    accept('application/json'),
+    parseJSON()
 );
 
 export default function fetchProtos(state) {
   if (fetchPromise) return fetchPromise;
 
   fetchPromise = Promise.all([
-      fetchProtosFetch('/local/proto-bundle').then((localResponse) => {
-        handleFileSet(state, localResponse.jsonData);
-      })
+    fetchProtosFetch('/local/proto-bundle').then((localResponse) => {
+      handleFileSet(state, localResponse.jsonData);
+    })
   ]);
 
   return fetchPromise;
@@ -51,7 +51,7 @@ function handleMessages(state, file, messages, thingName, path) {
     let thePath = thisPath.concat(i);
     let thisName = `${thingName}.${msg.name}`;
     state.byMessage[thisName] = msg;
-    msg.fullName=thisName;
+    msg.fullName = thisName;
     msg.fileDescriptor = file;
     let docs = pathDocs(thePath, file.sourceCodeInfo.location);
     attachDocs(msg, docs[0]);
@@ -69,10 +69,11 @@ function handleServices(state, file, services, thingName, path) {
     let thisName = `${thingName}.${service.name}`;
     let thePath = thisPath.concat(i);
     state.byService[thisName] = service;
-    service.fullName=thisName;
+    service.fullName = thisName;
     service.fileDescriptor = file;
-    let docs = pathDocs(thePath, file.sourceCodeInfo.location)[0];
-    attachDocs(service, docs);
+    let docs = pathDocs(thePath, file.sourceCodeInfo.location);
+    attachDocs(service, docs[0]);
+    methodDocs(service.method, docs, thePath)
     mapAllTheThings(state, file, service, thisName, thePath);
   });
 }
@@ -85,7 +86,7 @@ function handleEnums(state, file, enums, thingName, path) {
     let thisName = `${thingName}.${theEnum.name}`;
     let thePath = thisPath.concat(i);
     state.byEnum[thisName] = theEnum;
-    theEnum.fullName=thisName;
+    theEnum.fullName = thisName;
     theEnum.fileDescriptor = file;
     let docs = pathDocs(thePath, file.sourceCodeInfo.location)[0];
     mapAllTheThings(state, file, theEnum, thisName, thePath);
@@ -114,7 +115,7 @@ function attachDocs(thing, docs) {
     docString = `${docString}\n${cmt}`;
   });
 
-  if(docs.leadingComments) {
+  if (docs.leadingComments) {
     docString = `${docString}\n${docs.leadingComments}`;
   }
 
@@ -122,7 +123,7 @@ function attachDocs(thing, docs) {
     docString = `${docString}\n${cmt}`;
   });
 
-  if(docString) thing.documentation = docString;
+  if (docString) thing.documentation = docString;
 }
 
 // locs = local docs
@@ -171,3 +172,11 @@ function messageDocs(msg, locs, path) {
   });
 }
 
+function methodDocs(methods, locs, path) {
+  let methodDocs = path.concat(2);
+
+  forEach(methods, (meth, i) => {
+    let docs = pathDocs(methodDocs.concat(i), locs)[0];
+    attachDocs(meth, docs);
+  });
+}
