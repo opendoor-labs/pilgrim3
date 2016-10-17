@@ -70,6 +70,11 @@ def nested_message_proto_page(navigator, example_nested_message_url):
 def service_proto_page(navigator, example_service_url):
     yield navigator.get_page(example_service_url)
 
+@fixture
+@memoize
+def enum_proto_page(navigator, example_enum_url):
+    yield navigator.get_page(example_enum_url)
+
 ## Tests
 
 def test_file_comment(file_proto_page):
@@ -102,3 +107,11 @@ def test_message_comment(comment_string, message_proto_page):
 ])
 def test_service_comment(comment_string, service_proto_page):
     assert comment_string in service_proto_page
+
+@mark.parametrize("comment_string", [
+    ('enum-comment'),
+    ('enum-val[0]-comment'),
+    ('enum-val[1]-comment'),
+])
+def test_enum_comment(comment_string, enum_proto_page):
+    assert comment_string in enum_proto_page

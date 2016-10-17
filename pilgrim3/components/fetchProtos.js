@@ -88,7 +88,9 @@ function handleEnums(state, file, enums, thingName, path) {
     state.byEnum[thisName] = theEnum;
     theEnum.fullName = thisName;
     theEnum.fileDescriptor = file;
-    let docs = pathDocs(thePath, file.sourceCodeInfo.location)[0];
+    let docs = pathDocs(thePath, file.sourceCodeInfo.location);
+    attachDocs(theEnum, docs[0]);
+    enumDocs(theEnum, docs, thePath);
     mapAllTheThings(state, file, theEnum, thisName, thePath);
   });
 }
@@ -178,5 +180,14 @@ function methodDocs(methods, locs, path) {
   forEach(methods, (meth, i) => {
     let docs = pathDocs(methodDocs.concat(i), locs)[0];
     attachDocs(meth, docs);
+  });
+}
+
+function enumDocs(theEnum, locs, path) {
+  let enumValueDocs = path.concat(2);
+
+  forEach(theEnum.value, (enumValue, i) => {
+    let docs = pathDocs(enumValueDocs.concat(i), locs)[0];
+    attachDocs(enumValue, docs);
   });
 }
