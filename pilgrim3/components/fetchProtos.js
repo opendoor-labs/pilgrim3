@@ -71,8 +71,9 @@ function handleServices(state, file, services, thingName, path) {
     state.byService[thisName] = service;
     service.fullName = thisName;
     service.fileDescriptor = file;
-    let docs = pathDocs(thePath, file.sourceCodeInfo.location)[0];
-    attachDocs(service, docs);
+    let docs = pathDocs(thePath, file.sourceCodeInfo.location);
+    attachDocs(service, docs[0]);
+    methodDocs(service.method, docs, thePath)
     mapAllTheThings(state, file, service, thisName, thePath);
   });
 }
@@ -171,3 +172,11 @@ function messageDocs(msg, locs, path) {
   });
 }
 
+function methodDocs(methods, locs, path) {
+  let methodDocs = path.concat(2);
+
+  forEach(methods, (meth, i) => {
+    let docs = pathDocs(methodDocs.concat(i), locs)[0];
+    attachDocs(meth, docs);
+  });
+}

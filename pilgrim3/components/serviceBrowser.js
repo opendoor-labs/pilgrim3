@@ -10,12 +10,14 @@ import OptionsPopover from './optionsPopover';
 export default class ServiceBrowser extends React.Component {
   renderService(service) {
 
+    // TODO(daicoden) replace test-done with template mechanism, tests will use it to inject this data, others can use it to styleize page
     return (
       <div>
         <h1>{service.name}<OptionsPopover placement='right' obj={service} /></h1>
         <DocBlock docs={service.documentation} />
         <ProtoInfo infoObject={service}/>
         {this.renderMethods(service)}
+        <div id="test-done"></div>
       </div>
     );
   }
@@ -33,6 +35,7 @@ export default class ServiceBrowser extends React.Component {
               <th>Name</th>
               <th>Input</th>
               <th>Output</th>
+              <th/>
             </tr>
           </thead>
           <tbody>
@@ -52,6 +55,7 @@ export default class ServiceBrowser extends React.Component {
           <td>{meth.name}</td>
           <td><Link to={`/messages/${meth.inputType}`}>{relativeName(meth.inputType, service.fileDescriptor)}</Link></td>
           <td><Link to={`/messages/${meth.outputType}`}>{relativeName(meth.outputType, service.fileDescriptor)}</Link></td>
+          <td>{meth.documentation}</td>
         </tr>
       );
     });

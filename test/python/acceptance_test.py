@@ -44,7 +44,7 @@ def example_enum_url():
 
 
 @fixture
-def example_enum_url():
+def example_service_url():
     yield '#/services/example.ExampleService'
 
 
@@ -64,6 +64,11 @@ def message_proto_page(navigator, example_message_url):
 @memoize
 def nested_message_proto_page(navigator, example_nested_message_url):
     yield navigator.get_page(example_nested_message_url)
+
+@fixture
+@memoize
+def service_proto_page(navigator, example_service_url):
+    yield navigator.get_page(example_service_url)
 
 ## Tests
 
@@ -90,3 +95,10 @@ def test_file_comment(file_proto_page):
 ])
 def test_message_comment(comment_string, message_proto_page):
     assert comment_string in message_proto_page
+
+@mark.parametrize("comment_string", [
+    ("service-comment") ,
+    ("action-comment"),
+])
+def test_service_comment(comment_string, service_proto_page):
+    assert comment_string in service_proto_page
