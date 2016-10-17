@@ -65,7 +65,6 @@ def message_proto_page(navigator, example_message_url):
 def nested_message_proto_page(navigator, example_nested_message_url):
     yield navigator.get_page(example_nested_message_url)
 
-
 ## Tests
 
 def test_file_comment(file_proto_page):

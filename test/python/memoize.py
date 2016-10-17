@@ -1,4 +1,7 @@
 import inspect
+# Private import to format error messages.
+# if this changes, no big deal, just remove
+from _pytest.fixtures import fail_fixturefunc
 
 
 # Memoizes the value.
@@ -26,6 +29,8 @@ def memoize(func):
                 next(cache['generator'])
             except StopIteration:
                 cache.pop('generator')
+            else:
+                fail_fixturefunc(func, "yield_fixture function has more than one 'yield'")
 
     arg_string = ",".join(inspect.getargspec(func)[0])
 
