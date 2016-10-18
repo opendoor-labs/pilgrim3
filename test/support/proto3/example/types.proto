@@ -51,6 +51,9 @@ message ExampleNestingScope {
         }
     }
 
+    /* Field in the nested scope */
+    string field = 1;
+
     /* nested-enum-comment */
     enum ExampleNestedEnum {
         /* nested-enum-val[0]-comment */

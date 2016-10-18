@@ -173,6 +173,9 @@ function serviceDocs(service, path, locs) {
 
   attachDocs(service, locs[0]);
   forEach(service.method, (meth, i) => {
+    // Get rid of trailing . in the input type name
+    meth.outputType = meth.outputType.substring(1);
+    meth.inputType = meth.inputType.substring(1);
     attachDocs(meth, pathDocs(methodDocPath.concat(i), locs)[0]);
   });
 }
