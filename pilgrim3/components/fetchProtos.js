@@ -37,7 +37,7 @@ function handleFileSet(state, fileset) {
 /**
  * Documentation for top level types (top level in file) are defined
  * at specific root indexes.  Nested types are not stored at the same
- * indexes, instead it is relative to the parent and at location 4 always.
+ * indexes, instead it is relative to the parent and at different indexes.
  *
  * It would be nice if it was recursive, but we have to parse file with one set of comment indexes,
  * and then handle nested messages separately.
@@ -55,7 +55,7 @@ function mapFile(state, file, name) {
 
 function mapAllTheThings(state, file, thing, thingName, path) {
   path = path || [];
-  handleMessages(state, file, thing.nestedType, thingName, path.concat(4));
+  handleMessages(state, file, thing.nestedType, thingName, path.concat(3));
   handleServices(state, file, thing.service, thingName, path.concat(4));
   handleEnums(state, file, thing.enumType, thingName, path.concat(4));
 }

@@ -85,8 +85,11 @@ def nested_enum_proto_page(navigator, example_nested_enum_url):
 
 ## Tests
 
-def test_file_comment(file_proto_page):
-    assert 'file-comment' in file_proto_page
+@mark.parametrize("comment_string", [
+    ("file-comment"),
+])
+def test_file_comment(comment_string, file_proto_page):
+    assert comment_string in file_proto_page
 
 # @mark.parametrize("token_type", [
 #    ("Enums (1)"),
@@ -108,6 +111,16 @@ def test_file_comment(file_proto_page):
 ])
 def test_message_comment(comment_string, message_proto_page):
     assert comment_string in message_proto_page
+
+@mark.parametrize("comment_string", [
+    ("nested-message-comment"),
+    ("nested-message-field-comment"),
+    ("nested-message-oneof-comment"),
+    ("nested-message-oneof-field[0]-comment"),
+    ("nested-message-oneof-field[1]-comment"),
+])
+def test_message_comment(comment_string, nested_message_proto_page):
+    assert comment_string in nested_message_proto_page
 
 @mark.parametrize("comment_string", [
     ("service-comment") ,

@@ -27,6 +27,7 @@ enum ExampleEnum {
     val2 = 1;
 }
 
+/* nesting-scope-comment */
 message ExampleNestingScope {
     /* nested-message-comment */
     message ExampleNestedMessage {
