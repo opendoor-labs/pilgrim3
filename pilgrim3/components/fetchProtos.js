@@ -39,8 +39,8 @@ function handleFileSet(state, fileset) {
  * at specific root indexes.  Nested types are not stored at the same
  * indexes, instead it is relative to the parent and at location 4 always.
  *
- * It would be nice if it was recursive, but we have to parse file, and then
- * recursive seperately.
+ * It would be nice if it was recursive, but we have to parse file with one set of comment indexes,
+ * and then handle nested messages separately.
  */
 function mapFile(state, file, name) {
   let messageDocLoc = [4];
@@ -180,7 +180,6 @@ function serviceDocs(service, path, locs) {
 function enumDocs(theEnum, path, locs) {
   let enumValueDocs = path.concat(2);
 
-  debugger
   attachDocs(theEnum, locs[0]);
   forEach(theEnum.value, (enumValue, i) => {
     attachDocs(enumValue, pathDocs(enumValueDocs.concat(i), locs)[0]);

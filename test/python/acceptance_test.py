@@ -42,6 +42,9 @@ def example_nested_message_url():
 def example_enum_url():
     yield '#/enums/example.ExampleEnum'
 
+@fixture
+def example_nested_enum_url():
+    yield '#/enums/example.ExampleNestingScope.ExampleNestedEnum'
 
 @fixture
 def example_service_url():
@@ -74,6 +77,11 @@ def service_proto_page(navigator, example_service_url):
 @memoize
 def enum_proto_page(navigator, example_enum_url):
     yield navigator.get_page(example_enum_url)
+
+@fixture
+@memoize
+def nested_enum_proto_page(navigator, example_nested_enum_url):
+    yield navigator.get_page(example_nested_enum_url)
 
 ## Tests
 
@@ -115,3 +123,11 @@ def test_service_comment(comment_string, service_proto_page):
 ])
 def test_enum_comment(comment_string, enum_proto_page):
     assert comment_string in enum_proto_page
+
+@mark.parametrize("comment_string", [
+    ('nested-enum-comment'),
+    ('nested-enum-val[0]-comment'),
+    ('nested-enum-val[1]-comment'),
+])
+def test_nested_enum_comment(comment_string, nested_enum_proto_page):
+    assert comment_string in nested_enum_proto_page
