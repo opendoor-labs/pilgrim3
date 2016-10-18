@@ -53,15 +53,19 @@ function mapFile(state, file, name) {
   handleEnums(state, file, file.enumType, name, enumDocLoc);
 }
 
-function mapAllTheThings(state, file, thing, thingName, path) {
+function mapNestedObjects(state, file, msg, name, path) {
   let nestedMessageDocLog = path.concat(3);
   let nestedEnumDocLog = path.concat(4);
 
-  handleMessages(state, file, thing.nestedType, thingName, nestedMessageDocLog);
-  handleEnums(state, file, thing.enumType, thingName, nestedEnumDocLog);
+  handleMessages(state, file, msg.nestedType, name, nestedMessageDocLog, (childMsg) => {
+    childMsg.wrapper = msg
+  });
+  handleEnums(state, file, msg.enumType, name, nestedEnumDocLog, (childEnum) => {
+    childEnum.wrapper = msg
+  });
 }
 
-function handleMessages(state, file, messages, thingName, thisPath) {
+function handleMessages(state, file, messages, thingName, thisPath, callback) {
   state.byMessage = state.byMessage || {};
   forEach(messages, (msg, i) => {
     let thePath = thisPath.concat(i);
@@ -70,11 +74,14 @@ function handleMessages(state, file, messages, thingName, thisPath) {
     msg.fullName = thisName;
     msg.fileDescriptor = file;
     messageDocs(msg, thePath, pathDocs(thePath, file.sourceCodeInfo.location));
-    mapAllTheThings(state, file, msg, thisName, thePath);
+    mapNestedObjects(state, file, msg, thisName, thePath);
+    if (callback != undefined) {
+      callback(msg);
+    }
   });
 }
 
-function handleServices(state, file, services, thingName, thisPath) {
+function handleServices(state, file, services, thingName, thisPath, callback) {
   state.byService = state.byService || {};
 
   forEach(services, (service, i) => {
@@ -84,11 +91,13 @@ function handleServices(state, file, services, thingName, thisPath) {
     service.fullName = thisName;
     service.fileDescriptor = file;
     serviceDocs(service, thePath, pathDocs(thePath, file.sourceCodeInfo.location))
-    mapAllTheThings(state, file, service, thisName, thePath);
+    if (callback != undefined) {
+      callback(service);
+    }
   });
 }
 
-function handleEnums(state, file, enums, thingName, thisPath) {
+function handleEnums(state, file, enums, thingName, thisPath, callback) {
   state.byEnum = state.byEnum || {};
 
   forEach(enums, (theEnum, i) => {
@@ -98,10 +107,13 @@ function handleEnums(state, file, enums, thingName, thisPath) {
     theEnum.fullName = thisName;
     theEnum.fileDescriptor = file;
     enumDocs(theEnum, thePath, pathDocs(thePath, file.sourceCodeInfo.location));
-    mapAllTheThings(state, file, theEnum, thisName, thePath);
+    if (callback != undefined) {
+      callback(theEnum);
+    }
   });
 }
 
+// Docs
 function pathDocs(path, items) {
   let matcher = matches(path);
   return filter(items, (loc) => {

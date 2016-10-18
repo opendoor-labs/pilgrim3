@@ -28,6 +28,18 @@ export default class ProtoInfo extends React.Component {
               <th>Name</th>
               <td>{thing.name}</td>
             </tr>
+            {(() => {
+              if (thing.wrapper != undefined) {
+                return (
+                    <tr>
+                      <th>Wrapper</th>
+                      <td><Link to={`/messages/${thing.wrapper.fullName}`}>{thing.wrapper.fullName}</Link></td>
+                    </tr>
+                );
+              } else {
+                return null;
+              }
+            })()}
           </tbody>
         </table>
       );
