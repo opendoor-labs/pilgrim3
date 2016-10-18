@@ -11,12 +11,14 @@ export default class EnumBrowser extends React.Component {
   renderEnum(theEnum) {
     let docs;
 
+    // TODO(daicoden) replace test-done with template mechanism, tests will use it to inject this data, others can use it to styleize page
     return (
       <div>
         <h1>{theEnum.name}<OptionsPopover placement='right' obj={theEnum} /></h1>
         <DocBlock docs={theEnum.documentation} />
         <ProtoInfo infoObject={theEnum}/>
         {this.renderValues(theEnum)}
+        <div id="test-done"></div>
       </div>
     );
   }
@@ -33,6 +35,7 @@ export default class EnumBrowser extends React.Component {
               <th/> 
               <th>ID</th>
               <th>Name</th>
+              <th/>
             </tr>
           </thead>
           <tbody>
@@ -50,6 +53,7 @@ export default class EnumBrowser extends React.Component {
           <td><OptionsPopover placement='left' obj={theEnum}/></td>
           <td>{value.number}</td>
           <td>{value.name}</td>
+          <td>{value.documentation}</td>
         </tr>
       );
     });

@@ -27,25 +27,40 @@ function handleFileSet(state, fileset) {
   window.state = state;
 
   forEach(fileset.file, (file) => {
-    fileDocs(file);
     state.byFile[file.name] = file;
     let thingName = `${file.package}`;
 
-    mapAllTheThings(state, file, file, thingName, []);
+    mapFile(state, file, thingName);
   });
+}
+
+/**
+ * Documentation for top level types (top level in file) are defined
+ * at specific root indexes.  Nested types are not stored at the same
+ * indexes, instead it is relative to the parent and at location 4 always.
+ *
+ * It would be nice if it was recursive, but we have to parse file with one set of comment indexes,
+ * and then handle nested messages separately.
+ */
+function mapFile(state, file, name) {
+  let messageDocLoc = [4];
+  let serviceDocLog = [6];
+  let enumDocLoc = [5];
+
+  fileDocs(file, file.sourceCodeInfo.location);
+  handleMessages(state, file, file.messageType, name, messageDocLoc);
+  handleServices(state, file, file.service, name, serviceDocLog);
+  handleEnums(state, file, file.enumType, name, enumDocLoc);
 }
 
 function mapAllTheThings(state, file, thing, thingName, path) {
   path = path || [];
-  handleMessages(state, file, thing.messageType, thingName, path);
-  handleMessages(state, file, thing.nestedType, thingName, path);
-  handleServices(state, file, thing.service, thingName, path);
-  handleEnums(state, file, thing.enumType, thingName, path);
+  handleMessages(state, file, thing.nestedType, thingName, path.concat(4));
+  handleServices(state, file, thing.service, thingName, path.concat(4));
+  handleEnums(state, file, thing.enumType, thingName, path.concat(4));
 }
 
-function handleMessages(state, file, messages, thingName, path) {
-  let thisPath = path.concat(4);
-
+function handleMessages(state, file, messages, thingName, thisPath) {
   state.byMessage = state.byMessage || {};
   forEach(messages, (msg, i) => {
     let thePath = thisPath.concat(i);
@@ -53,17 +68,13 @@ function handleMessages(state, file, messages, thingName, path) {
     state.byMessage[thisName] = msg;
     msg.fullName = thisName;
     msg.fileDescriptor = file;
-    let docs = pathDocs(thePath, file.sourceCodeInfo.location);
-    attachDocs(msg, docs[0]);
-    messageDocs(msg, docs, thePath);
+    messageDocs(msg, thePath, pathDocs(thePath, file.sourceCodeInfo.location));
     mapAllTheThings(state, file, msg, thisName, thePath);
   });
 }
 
-function handleServices(state, file, services, thingName, path) {
+function handleServices(state, file, services, thingName, thisPath) {
   state.byService = state.byService || {};
-
-  let thisPath = path.concat(6);
 
   forEach(services, (service, i) => {
     let thisName = `${thingName}.${service.name}`;
@@ -71,16 +82,13 @@ function handleServices(state, file, services, thingName, path) {
     state.byService[thisName] = service;
     service.fullName = thisName;
     service.fileDescriptor = file;
-    let docs = pathDocs(thePath, file.sourceCodeInfo.location);
-    attachDocs(service, docs[0]);
-    methodDocs(service.method, docs, thePath)
+    serviceDocs(service, thePath, pathDocs(thePath, file.sourceCodeInfo.location))
     mapAllTheThings(state, file, service, thisName, thePath);
   });
 }
 
-function handleEnums(state, file, enums, thingName, path) {
+function handleEnums(state, file, enums, thingName, thisPath) {
   state.byEnum = state.byEnum || {};
-  let thisPath = path.concat(5);
 
   forEach(enums, (theEnum, i) => {
     let thisName = `${thingName}.${theEnum.name}`;
@@ -88,7 +96,7 @@ function handleEnums(state, file, enums, thingName, path) {
     state.byEnum[thisName] = theEnum;
     theEnum.fullName = thisName;
     theEnum.fileDescriptor = file;
-    let docs = pathDocs(thePath, file.sourceCodeInfo.location)[0];
+    enumDocs(theEnum, thePath, pathDocs(thePath, file.sourceCodeInfo.location));
     mapAllTheThings(state, file, theEnum, thisName, thePath);
   });
 }
@@ -100,12 +108,12 @@ function pathDocs(path, items) {
   });
 }
 
-function fileDocs(fd) {
-  let packageDocs = pathDocs([2], fd.sourceCodeInfo.location);
-  let syntaxDocs = pathDocs([12], fd.sourceCodeInfo.location);
+function fileDocs(file, locs) {
+  let packageDocs = pathDocs([2], locs);
+  let syntaxDocs = pathDocs([12], locs);
 
-  attachDocs(fd, syntaxDocs[0]);
-  attachDocs(fd, packageDocs[0]);
+  attachDocs(file, syntaxDocs[0]);
+  attachDocs(file, packageDocs[0]);
 }
 
 function attachDocs(thing, docs) {
@@ -127,7 +135,7 @@ function attachDocs(thing, docs) {
 }
 
 // locs = local docs
-function messageDocs(msg, locs, path) {
+function messageDocs(msg, path, locs) {
   // Each of these numbers come from the file descriptor google protobuf definition.
   // Since enums can have recursive messages which can have recursive enums etc, the location structure is like this:
   // location: [TokenType, TokenIndex].  The token index is simply to support multiple tokens inside of a scope, i.e.
@@ -148,35 +156,32 @@ function messageDocs(msg, locs, path) {
   // NB: enums and messages share the same position... need to find out more
   let fieldsPath = path.concat(2);
   let nestedTypePath = path.concat(3);
-  let enumTypePath = path.concat(4);
   let oneOfPath = path.concat(8);
 
+  attachDocs(msg, locs[0]);
   forEach(msg.field, (field, i) => {
-    let docs = pathDocs(fieldsPath.concat(i), locs)[0];
-    attachDocs(field, docs);
-  });
-
-  forEach(msg.nestedType, (nestedMsg, i) => {
-    let docs = pathDocs(nestedTypePath.concat(i), locs)[0];
-    attachDocs(nestedMsg, docs);
-  });
-
-  forEach(msg.enumType, (enumType, i) => {
-    let docs = pathDocs(enumTypePath.concat(i), locs)[0];
-    attachDocs(enumType, docs);
+    attachDocs(field, pathDocs(fieldsPath.concat(i), locs)[0]);
   });
 
   forEach(msg.oneofDecl, (oneOf, i) => {
-    let docs = pathDocs(oneOfPath.concat(i), locs)[0];
-    attachDocs(oneOf, docs);
+    attachDocs(oneOf, pathDocs(oneOfPath.concat(i), locs)[0]);
   });
 }
 
-function methodDocs(methods, locs, path) {
+function serviceDocs(service, path, locs) {
   let methodDocs = path.concat(2);
 
-  forEach(methods, (meth, i) => {
-    let docs = pathDocs(methodDocs.concat(i), locs)[0];
-    attachDocs(meth, docs);
+  attachDocs(service, locs[0]);
+  forEach(service.method, (meth, i) => {
+    attachDocs(meth, pathDocs(methodDocs.concat(i), locs)[0]);
+  });
+}
+
+function enumDocs(theEnum, path, locs) {
+  let enumValueDocs = path.concat(2);
+
+  attachDocs(theEnum, locs[0]);
+  forEach(theEnum.value, (enumValue, i) => {
+    attachDocs(enumValue, pathDocs(enumValueDocs.concat(i), locs)[0]);
   });
 }
