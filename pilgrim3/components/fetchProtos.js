@@ -44,20 +44,21 @@ function handleFileSet(state, fileset) {
  */
 function mapFile(state, file, name) {
   let messageDocLoc = [4];
-  let serviceDocLog = [6];
+  let serviceDocLoc = [6];
   let enumDocLoc = [5];
 
   fileDocs(file, file.sourceCodeInfo.location);
   handleMessages(state, file, file.messageType, name, messageDocLoc);
-  handleServices(state, file, file.service, name, serviceDocLog);
+  handleServices(state, file, file.service, name, serviceDocLoc);
   handleEnums(state, file, file.enumType, name, enumDocLoc);
 }
 
 function mapAllTheThings(state, file, thing, thingName, path) {
-  path = path || [];
-  handleMessages(state, file, thing.nestedType, thingName, path.concat(3));
-  handleServices(state, file, thing.service, thingName, path.concat(4));
-  handleEnums(state, file, thing.enumType, thingName, path.concat(4));
+  let nestedMessageDocLog = path.concat(3);
+  let nestedEnumDocLog = path.concat(4);
+
+  handleMessages(state, file, thing.nestedType, thingName, nestedMessageDocLog);
+  handleEnums(state, file, thing.enumType, thingName, nestedEnumDocLog);
 }
 
 function handleMessages(state, file, messages, thingName, thisPath) {
@@ -154,34 +155,33 @@ function messageDocs(msg, path, locs) {
   // The location for Baz2 is [4, 0, 3, 0, 4, 1]
   //
   // NB: enums and messages share the same position... need to find out more
-  let fieldsPath = path.concat(2);
-  let nestedTypePath = path.concat(3);
-  let oneOfPath = path.concat(8);
+  let fieldDocPath = path.concat(2);
+  let oneOfDocPath = path.concat(8);
 
   attachDocs(msg, locs[0]);
   forEach(msg.field, (field, i) => {
-    attachDocs(field, pathDocs(fieldsPath.concat(i), locs)[0]);
+    attachDocs(field, pathDocs(fieldDocPath.concat(i), locs)[0]);
   });
 
   forEach(msg.oneofDecl, (oneOf, i) => {
-    attachDocs(oneOf, pathDocs(oneOfPath.concat(i), locs)[0]);
+    attachDocs(oneOf, pathDocs(oneOfDocPath.concat(i), locs)[0]);
   });
 }
 
 function serviceDocs(service, path, locs) {
-  let methodDocs = path.concat(2);
+  let methodDocPath = path.concat(2);
 
   attachDocs(service, locs[0]);
   forEach(service.method, (meth, i) => {
-    attachDocs(meth, pathDocs(methodDocs.concat(i), locs)[0]);
+    attachDocs(meth, pathDocs(methodDocPath.concat(i), locs)[0]);
   });
 }
 
 function enumDocs(theEnum, path, locs) {
-  let enumValueDocs = path.concat(2);
+  let enumValueDocsPath = path.concat(2);
 
   attachDocs(theEnum, locs[0]);
   forEach(theEnum.value, (enumValue, i) => {
-    attachDocs(enumValue, pathDocs(enumValueDocs.concat(i), locs)[0]);
+    attachDocs(enumValue, pathDocs(enumValueDocsPath.concat(i), locs)[0]);
   });
 }
