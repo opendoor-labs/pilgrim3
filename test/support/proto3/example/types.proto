@@ -10,12 +10,20 @@ message ExampleMessage {
     /* message-field-comment */
     string field = 1;
 
-    /* message-oneof-comment */
+    /* message-oneof[0]-comment */
     oneof one_of {
-      /* message-oneof-field[0]-comment */
+      /* message-oneof[0]-field[0]-comment */
       string field2 = 2;
-      /* message-oneof-field[1]-comment */
+      /* message-oneof[0]-field[1]-comment */
       string field3 = 3;
+    }
+
+    /* message-oneof[1]-comment */
+    oneof one_of_2 {
+      /* message-oneof[1]-field[0]-comment */
+      string field4 = 4;
+      /* message-oneof[1]-field[1]-comment */
+      string field5 = 5;
     }
 }
 
@@ -27,6 +35,7 @@ enum ExampleEnum {
     val2 = 1;
 }
 
+/* nesting-scope-comment */
 message ExampleNestingScope {
     /* nested-message-comment */
     message ExampleNestedMessage {
@@ -42,12 +51,40 @@ message ExampleNestingScope {
         }
     }
 
+    /* Field in the nested scope */
+    string field = 1;
+
     /* nested-enum-comment */
     enum ExampleNestedEnum {
         /* nested-enum-val[0]-comment */
         val1 = 0;
         /* nested-enum-val[1]-comment */
         val2 = 1;
+    }
+
+    message RecursiveProvingScope {
+        /* recursive-message-comment */
+        message ExampleRecursiveMessoge {
+            /* recursive-message-field-comment */
+            string field = 1;
+
+            /* recursive-message-oneof-comment */
+            oneof one_of {
+              /* recursive-message-oneof-field[0]-comment */
+              string field2 = 2;
+
+              /* recursive-message-oneof-field[1]-comment */
+              string field3 = 3;
+            }
+        }
+
+        /* recursive-enum-comment */
+        enum ExampleRecursiveEnum {
+            /* recursive-enum-val[0]-comment */
+            val1 = 0;
+            /* recursive-enum-val[1]-comment */
+            val2 = 1;
+        }
     }
 }
 

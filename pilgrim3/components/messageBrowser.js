@@ -1,10 +1,11 @@
 import React from 'react';
 import state from './state';
 import { Link } from 'react-router';
-import { map, forEach, isNumber, find } from 'lodash';
+import { compact, map, forEach, isNumber, find } from 'lodash';
 import { relativeName } from './utils';
 import ProtoInfo from './protoInfo';
 import DocBlock from './docBlock';
+import LinkBlock from './linkBlock'
 import OptionsPopover from './optionsPopover';
 
 const COLORS = [
@@ -33,10 +34,47 @@ export default class MessageBrowser extends React.Component {
   renderMessage(msg) {
     // TODO(daicoden) replace test-done with template mechanism, tests will use it to inject this data, others can use it to styleize page
     return (
-      <div>
-        <h1>{msg.name}<OptionsPopover placement='right' obj={msg} /></h1>
+      <div className='panel panel-default'>
+        <div className='panel-heading'>
+          <h4>{msg.name}<OptionsPopover placement='right' obj={msg} /></h4>
+        </div>
         <DocBlock docs={msg.documentation}/>
-        <ProtoInfo infoObject={msg}/>
+
+        <div className='row'>
+          <div className='col-sm-12'>
+            <div className='panel panel-default'>
+              <div className='panel-heading'>
+                <h5>info</h5>
+              </div>
+              <ProtoInfo infoObject={msg}/>
+            </div>
+          </div>
+        </div>
+
+        <div className='row'>
+          <div className='col-sm-6'>
+            <div className='panel panel-default'>
+              <div className='panel-heading'>
+                <h4>Nested Messages ({compact(msg.nestedType).length})</h4>
+              </div>
+              <div className='panel-body'>
+                <LinkBlock things={msg.nestedType} urlBase='/messages' />
+              </div>
+            </div>
+          </div>
+
+          <div className='col-sm-6'>
+            <div className='panel panel-default'>
+              <div className='panel-heading'>
+                <h4>Nested Enums ({compact(msg.enumType).length})</h4>
+              </div>
+              <div className='panel-body'>
+                <LinkBlock things={msg.enumType} urlBase='/enums' />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {this.renderFields(msg)}
         <div id="test-done"></div>
       </div>

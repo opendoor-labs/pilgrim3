@@ -4,6 +4,7 @@ import { map, compact } from 'lodash';
 import { Link } from 'react-router';
 import OptionsTable from './optionsTable'
 import DocBlock from './docBlock'
+import LinkBlock from './linkBlock'
 
 export default class FileBrowser extends React.Component {
   dependencyItems(items) {
@@ -38,23 +39,6 @@ export default class FileBrowser extends React.Component {
           </tr>
         </tbody>
       </table>
-    );
-  }
-
-  linkThings(things, prefix) {
-    let arrayThings = compact(things)
-    let links = map(arrayThings, (thing) => {
-      return (
-        <li key={`thing-link-${prefix}-${thing.fullName}`}>
-          <Link to={`${prefix}/${thing.fullName}`}>{thing.name}</Link>
-        </li>
-      );
-    });
-
-    return (
-      <ul className='list list-unstyled'>
-        {links}
-      </ul>
     );
   }
 
@@ -104,7 +88,7 @@ export default class FileBrowser extends React.Component {
                 <h4>Enums ({compact(file.enumType).length})</h4>
               </div>
               <div className='panel-body'>
-                {this.linkThings(file.enumType, '/enums')}
+                <LinkBlock things={file.enumType} urlBase='/enums' />
               </div>
             </div>
           </div>
@@ -115,7 +99,7 @@ export default class FileBrowser extends React.Component {
                 <h4>Services ({compact(file.service).length})</h4>
               </div>
               <div className='panel-body'>
-                {this.linkThings(file.service, '/services')}
+                <LinkBlock things={file.service} urlBase='/services' />
               </div>
             </div>
           </div>
@@ -126,7 +110,7 @@ export default class FileBrowser extends React.Component {
                 <h4>Messages ({compact(file.messageType).length})</h4>
               </div>
               <div className='panel-body'>
-                {this.linkThings(file.messageType, '/messages')}
+                <LinkBlock things={file.messageType} urlBase='/messages' />
               </div>
             </div>
           </div>
