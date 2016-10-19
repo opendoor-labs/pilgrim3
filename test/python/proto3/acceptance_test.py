@@ -1,5 +1,5 @@
-from memoize import memoize
-from navigator import Navigator
+from test.python.memoize import memoize
+from test.python.navigator import Navigator
 from pytest import fixture
 from pytest import mark
 

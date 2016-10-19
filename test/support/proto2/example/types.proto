@@ -1,0 +1,92 @@
+// Comments in this doc are asserted in tests, do not change
+
+/* file-comment */
+syntax = "proto2";
+
+package example;
+
+/* message-comment */
+message ExampleMessage {
+    /* message-field-comment */
+    optional string field = 1;
+
+    /* message-oneof[0]-comment */
+    oneof one_of {
+      /* message-oneof[0]-field[0]-comment */
+      string field2 = 2;
+      /* message-oneof[0]-field[1]-comment */
+      string field3 = 3;
+    }
+
+    /* message-oneof[1]-comment */
+    oneof one_of_2 {
+      /* message-oneof[1]-field[0]-comment */
+      string field4 = 4;
+      /* message-oneof[1]-field[1]-comment */
+      string field5 = 5;
+    }
+}
+
+/* enum-comment */
+enum ExampleEnum {
+    /* enum-val[0]-comment */
+    val1 = 0;
+    /* enum-val[1]-comment */
+    val2 = 1;
+}
+
+/* nesting-scope-comment */
+message ExampleNestingScope {
+    /* nested-message-comment */
+    message ExampleNestedMessage {
+        /* nested-message-field-comment */
+        optional string field = 1;
+
+        /* nested-message-oneof-comment */
+        oneof one_of {
+          /* nested-message-oneof-field[0]-comment */
+          string field2 = 2;
+          /* nested-message-oneof-field[1]-comment */
+          string field3 = 3;
+        }
+    }
+
+    /* nested-enum-comment */
+    enum ExampleNestedEnum {
+        /* nested-enum-val[0]-comment */
+        val1 = 0;
+        /* nested-enum-val[1]-comment */
+        val2 = 1;
+    }
+
+    message RecursiveProvingScope {
+        /* recursive-message-comment */
+        message ExampleRecursiveMessoge {
+            /* recursive-message-field-comment */
+            optional string field = 1;
+
+            /* recursive-message-oneof-comment */
+            oneof one_of {
+              /* recursive-message-oneof-field[0]-comment */
+              string field2 = 2;
+
+              /* recursive-message-oneof-field[1]-comment */
+              string field3 = 3;
+            }
+        }
+
+        /* recursive-enum-comment */
+        enum ExampleRecursiveEnum {
+            /* recursive-enum-val[0]-comment */
+            val1 = 0;
+            /* recursive-enum-val[1]-comment */
+            val2 = 1;
+        }
+    }
+}
+
+/* service-comment */
+service ExampleService {
+    /* action-comment */
+    rpc doAction (ExampleMessage) returns (ExampleNestingScope.ExampleNestedMessage) {}
+}
