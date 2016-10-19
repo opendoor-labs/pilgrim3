@@ -1,3 +1,5 @@
+from pilgrim3.app import app as pilgrim_app
+from flask import request
 from pytest import fixture
 from selenium import webdriver
 import httplib
@@ -41,6 +43,25 @@ def app_log_path():
 @fixture(scope="session")
 def ghostdriver_log_path():
     yield "log/ghostdriver.log"
+
+
+@fixture(scope="session")
+def app_with_shutdown_endpoints():
+    # OMG there is no signaling of threads in python 2.x - so
+    # the only way to tell the flask app to shutdown is this.
+    # I searched far and wide, jesus christ. http://flask.pocoo.org/snippets/67/
+    #
+    # The app thread should be started as a damon so we get a kill -9 after the timeout expires
+    @pilgrim_app.route('/shutdown', methods=['GET'])
+    def shutdown():
+        request.environ.get('werkzeug.server.shutdown')()
+        return "shutdown"
+
+    @pilgrim_app.route('/booted', methods=['GET'])
+    def booted():
+        return "booted"
+
+    yield pilgrim_app
 
 
 # use a provider to make connection to server after it has been booted

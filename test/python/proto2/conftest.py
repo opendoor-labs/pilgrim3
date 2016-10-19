@@ -1,5 +1,3 @@
-from flask import request
-from pilgrim3.app import app as pilgrim_app
 from pytest import fixture
 from socket import error as socket_error
 from threading import Thread
@@ -7,9 +5,10 @@ import httplib
 import os
 import time
 
+
 @fixture(scope="module")
 def app(app_with_shutdown_endpoints):
-    app_with_shutdown_endpoints.config['proto-bundle'] = os.path.abspath("test/support/build/types-proto3.build")
+    app_with_shutdown_endpoints.config['proto-bundle'] = os.path.abspath("test/support/build/types-proto2.build")
     yield app_with_shutdown_endpoints
 
 
