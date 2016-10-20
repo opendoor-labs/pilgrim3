@@ -46,60 +46,68 @@ function handleFileSet(state, fileset) {
  * and then handle nested messages separately.
  */
 function mapFile(state, file, name) {
-  let messageDocPath = [4];
-  let serviceDocPath = [6];
-  let enumDocPath = [5];
-
   state.byMessage = state.byMessage || {};
   state.byEnum = state.byEnum || {};
   state.byService = state.byService || {};
 
   fileDocs(file, file.sourceCodeInfo.location);
-  handleTypes(file.messageType, state.byMessage, file, name, messageDocPath, handleMessage((msg, path, locs) => {
-    mapNestedObjects(state, file, msg, msg.fullName, path);
-  }));
-
-  handleTypes(file.enumType, state.byEnum, file, name, enumDocPath, handleEnum((msg, path, locs) => {}));
-
-  handleTypes(file.service, state.byService, file, name, serviceDocPath, (service, path, locs) => {
-    attachFieldDocs(service.method, path.concat(fieldDocLoc), locs);
-  });
+  mapTheType(file, state, file, name, [], true);
 }
 
-function mapNestedObjects(state, file, msg, name, path) {
+/**
+ * For simplicity we make this look like recursion, however only messages
+ * are actually recursive.  Messages can only contain messages and enums.
+ *
+ * @param type
+ * @param state
+ * @param file
+ * @param name
+ * @param path
+ * @param root
+ */
+function mapTheType(type, state, file, name, path, isRoot) {
+  let messageDocPath = path.concat(4);
   let nestedMessageDocLog = path.concat(3);
-  let nestedEnumDocLog = path.concat(4);
+  let enumDocPath = null; // See comment below
+  let serviceDocPath = path.concat(6);
+  // Enums need special handling because their doc-paths shift
+  // when nested under a message, but the collection they are
+  // stored on doesn't change.
+  if (isRoot) {
+    enumDocPath = path.concat(5);
+  } else {
+    enumDocPath = path.concat(4);
+  }
 
-  handleTypes(msg.nestedType, state.byMessage, file, name, nestedMessageDocLog,
-      handleMessage((nestedMsg, path, locs) => {
-    mapNestedObjects(state, file, nestedMsg, nestedMsg.fullName, path);
-    nestedMsg.wrapper = msg
-  }));
-
-  handleTypes(msg.enumType, state.byEnum, file, name, nestedEnumDocLog, handleEnum((theEnum, path, locs) => {
-    theEnum.wrapper = msg
-  }));
-}
-
-/* Message specific handling */
-function handleMessage(callback) {
-  let toReturn = (msg, path, locs) => {
+  handleTypes(type.messageType, state.byMessage, file, name, messageDocPath, (msg, path, locs) => {
     attachFieldDocs(msg.oneofDecl, path.concat(oneOfDocLoc), locs);
     attachFieldDocs(msg.field, path.concat(fieldDocLoc), locs);
-    callback(msg, path, locs)
-  };
+    mapTheType(msg, state, file, msg.fullName, path, false);
+    if (!isRoot) {
+      msg.wrapper = type;
+    }
+  });
 
-  return toReturn;
-}
 
-/* Enum specific handling */
-function handleEnum(callback) {
-  let toReturn = (theEnum, path, locs) => {
+  handleTypes(type.nestedType, state.byMessage, file, name, nestedMessageDocLog, (msg, path, locs) => {
+    attachFieldDocs(msg.oneofDecl, path.concat(oneOfDocLoc), locs);
+    attachFieldDocs(msg.field, path.concat(fieldDocLoc), locs);
+    mapTheType(msg, state, file, msg.fullName, path, false);
+    if (!isRoot) {
+      msg.wrapper = type;
+    }
+  });
+
+  handleTypes(type.enumType, state.byEnum, file, name, enumDocPath, (theEnum, path, locs) => {
     attachFieldDocs(theEnum.value, path.concat(fieldDocLoc), locs);
-    callback(theEnum, path, locs)
-  };
+    if (!isRoot) {
+      theEnum.wrapper = type;
+    }
+  });
 
-  return toReturn;
+  handleTypes(type.service, state.byService, file, name, serviceDocPath, (service, path, locs) => {
+    attachFieldDocs(service.method, path.concat(fieldDocLoc), locs);
+  });
 }
 
 function handleTypes(types, registry, file, name, path, callback) {
