@@ -103,37 +103,37 @@ def types_file_url():
 
 @fixture
 def example_message_url():
-    yield '/#/messages/example.ExampleMessage'
+    yield '/#/messages/.example.ExampleMessage'
 
 
 @fixture
 def example_nested_message_url():
-    yield '/#/messages/example.ExampleNestingScope.ExampleNestedMessage'
+    yield '/#/messages/.example.ExampleNestingScope.ExampleNestedMessage'
 
 
 @fixture
 def example_recursive_message_url():
-    yield '/#/messages/example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveMessoge '
+    yield '/#/messages/.example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveMessage'
 
 
 @fixture
 def example_enum_url():
-    yield '#/enums/example.ExampleEnum'
+    yield '#/enums/.example.ExampleEnum'
 
 
 @fixture
 def example_nested_enum_url():
-    yield '/#/enums/example.ExampleNestingScope.ExampleNestedEnum'
+    yield '/#/enums/.example.ExampleNestingScope.ExampleNestedEnum'
 
 
 @fixture
 def example_recursive_enum_url():
-    yield '/#/enums/example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveEnum'
+    yield '/#/enums/.example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveEnum'
 
 
 @fixture
 def example_service_url():
-    yield '#/services/example.ExampleService'
+    yield '#/services/.example.ExampleService'
 
 
 @fixture

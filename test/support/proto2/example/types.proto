@@ -64,7 +64,7 @@ message ExampleNestingScope {
 
     message RecursiveProvingScope {
         /* recursive-message-comment */
-        message ExampleRecursiveMessoge {
+        message ExampleRecursiveMessage {
             /* recursive-message-field-comment */
             optional string field = 1;
 

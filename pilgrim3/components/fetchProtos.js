@@ -4,6 +4,8 @@ import {createFetch, base, accept, parseJSON} from 'http-client';
 import {forEach, filter, matches} from 'lodash';
 
 let fetchPromise;
+let fieldDocLoc = 2;
+let oneOfDocLoc = 8;
 
 const fetchProtosFetch = createFetch(
     accept('application/json'),
@@ -28,7 +30,8 @@ function handleFileSet(state, fileset) {
 
   forEach(fileset.file, (file) => {
     state.byFile[file.name] = file;
-    let thingName = `${file.package}`;
+    // Add a leading . because that's how proto_bundle's work
+    let thingName = `.${file.package}`;
 
     mapFile(state, file, thingName);
   });
@@ -43,72 +46,75 @@ function handleFileSet(state, fileset) {
  * and then handle nested messages separately.
  */
 function mapFile(state, file, name) {
-  let messageDocLoc = [4];
-  let serviceDocLoc = [6];
-  let enumDocLoc = [5];
+  let messageDocPath = [4];
+  let serviceDocPath = [6];
+  let enumDocPath = [5];
+
+  state.byMessage = state.byMessage || {};
+  state.byEnum = state.byEnum || {};
+  state.byService = state.byService || {};
 
   fileDocs(file, file.sourceCodeInfo.location);
-  handleMessages(state, file, file.messageType, name, messageDocLoc);
-  handleServices(state, file, file.service, name, serviceDocLoc);
-  handleEnums(state, file, file.enumType, name, enumDocLoc);
+  handleTypes(file.messageType, state.byMessage, file, name, messageDocPath, handleMessage((msg, path, locs) => {
+    mapNestedObjects(state, file, msg, msg.fullName, path);
+  }));
+
+  handleTypes(file.enumType, state.byEnum, file, name, enumDocPath, handleEnum((msg, path, locs) => {}));
+
+  handleTypes(file.service, state.byService, file, name, serviceDocPath, (service, path, locs) => {
+    attachFieldDocs(service.method, path.concat(fieldDocLoc), locs);
+  });
 }
 
 function mapNestedObjects(state, file, msg, name, path) {
   let nestedMessageDocLog = path.concat(3);
   let nestedEnumDocLog = path.concat(4);
 
-  handleMessages(state, file, msg.nestedType, name, nestedMessageDocLog, (childMsg) => {
-    childMsg.wrapper = msg
-  });
-  handleEnums(state, file, msg.enumType, name, nestedEnumDocLog, (childEnum) => {
-    childEnum.wrapper = msg
-  });
+  handleTypes(msg.nestedType, state.byMessage, file, name, nestedMessageDocLog,
+      handleMessage((nestedMsg, path, locs) => {
+    mapNestedObjects(state, file, nestedMsg, nestedMsg.fullName, path);
+    nestedMsg.wrapper = msg
+  }));
+
+  handleTypes(msg.enumType, state.byEnum, file, name, nestedEnumDocLog, handleEnum((theEnum, path, locs) => {
+    theEnum.wrapper = msg
+  }));
 }
 
-function handleMessages(state, file, messages, thingName, thisPath, callback) {
-  state.byMessage = state.byMessage || {};
-  forEach(messages, (msg, i) => {
-    let thePath = thisPath.concat(i);
-    let thisName = `${thingName}.${msg.name}`;
-    state.byMessage[thisName] = msg;
-    msg.fullName = thisName;
-    msg.fileDescriptor = file;
-    messageDocs(msg, thePath, pathDocs(thePath, file.sourceCodeInfo.location));
-    mapNestedObjects(state, file, msg, thisName, thePath);
-    if (callback != undefined) {
-      callback(msg);
-    }
-  });
+/* Message specific handling */
+function handleMessage(callback) {
+  let toReturn = (msg, path, locs) => {
+    attachFieldDocs(msg.oneofDecl, path.concat(oneOfDocLoc), locs);
+    attachFieldDocs(msg.field, path.concat(fieldDocLoc), locs);
+    callback(msg, path, locs)
+  };
+
+  return toReturn;
 }
 
-function handleServices(state, file, services, thingName, thisPath, callback) {
-  state.byService = state.byService || {};
+/* Enum specific handling */
+function handleEnum(callback) {
+  let toReturn = (theEnum, path, locs) => {
+    attachFieldDocs(theEnum.value, path.concat(fieldDocLoc), locs);
+    callback(theEnum, path, locs)
+  };
 
-  forEach(services, (service, i) => {
-    let thisName = `${thingName}.${service.name}`;
-    let thePath = thisPath.concat(i);
-    state.byService[thisName] = service;
-    service.fullName = thisName;
-    service.fileDescriptor = file;
-    serviceDocs(service, thePath, pathDocs(thePath, file.sourceCodeInfo.location))
-    if (callback != undefined) {
-      callback(service);
-    }
-  });
+  return toReturn;
 }
 
-function handleEnums(state, file, enums, thingName, thisPath, callback) {
-  state.byEnum = state.byEnum || {};
+function handleTypes(types, registry, file, name, path, callback) {
+  forEach(types, (type, i) => {
+    let theName = `${name}.${type.name}`;
+    let thePath = path.concat(i);
+    let locs = pathDocs(thePath, file.sourceCodeInfo.location);
 
-  forEach(enums, (theEnum, i) => {
-    let thisName = `${thingName}.${theEnum.name}`;
-    let thePath = thisPath.concat(i);
-    state.byEnum[thisName] = theEnum;
-    theEnum.fullName = thisName;
-    theEnum.fileDescriptor = file;
-    enumDocs(theEnum, thePath, pathDocs(thePath, file.sourceCodeInfo.location));
+    type.fullName = theName;
+    type.fileDescriptor = file;
+    registry[theName] = type;
+    attachDocs(type, locs[0]);
+
     if (callback != undefined) {
-      callback(theEnum);
+      callback(type, thePath, locs);
     }
   });
 }
@@ -147,56 +153,9 @@ function attachDocs(thing, docs) {
   if (docString) thing.documentation = docString;
 }
 
-// locs = local docs
-function messageDocs(msg, path, locs) {
-  // Each of these numbers come from the file descriptor google protobuf definition.
-  // Since enums can have recursive messages which can have recursive enums etc, the location structure is like this:
-  // location: [TokenType, TokenIndex].  The token index is simply to support multiple tokens inside of a scope, i.e.
-  // message Foo {
-  //   message Bar {
-  //     enum Baz1 {
-  //     }
-  //     enum Baz2 {
-  //     }
-  //   }
-  // }
-  //
-  // The location for Foo is [4, 0]
-  // The location for Bar is [4, 0, 3, 0]
-  // The location for Baz1 is [4, 0, 3, 0, 4, 0]
-  // The location for Baz2 is [4, 0, 3, 0, 4, 1]
-  //
-  // NB: enums and messages share the same position... need to find out more
-  let fieldDocPath = path.concat(2);
-  let oneOfDocPath = path.concat(8);
 
-  attachDocs(msg, locs[0]);
-  forEach(msg.field, (field, i) => {
-    attachDocs(field, pathDocs(fieldDocPath.concat(i), locs)[0]);
-  });
-
-  forEach(msg.oneofDecl, (oneOf, i) => {
-    attachDocs(oneOf, pathDocs(oneOfDocPath.concat(i), locs)[0]);
-  });
-}
-
-function serviceDocs(service, path, locs) {
-  let methodDocPath = path.concat(2);
-
-  attachDocs(service, locs[0]);
-  forEach(service.method, (meth, i) => {
-    // Get rid of trailing . in the input type name
-    meth.outputType = meth.outputType.substring(1);
-    meth.inputType = meth.inputType.substring(1);
-    attachDocs(meth, pathDocs(methodDocPath.concat(i), locs)[0]);
-  });
-}
-
-function enumDocs(theEnum, path, locs) {
-  let enumValueDocsPath = path.concat(2);
-
-  attachDocs(theEnum, locs[0]);
-  forEach(theEnum.value, (enumValue, i) => {
-    attachDocs(enumValue, pathDocs(enumValueDocsPath.concat(i), locs)[0]);
+function attachFieldDocs(fields, path, locs) {
+  forEach(fields, (field, i) => {
+    attachDocs(field, pathDocs(path.concat(i), locs)[0]);
   });
 }
