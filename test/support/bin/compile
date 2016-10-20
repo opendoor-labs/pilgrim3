@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# Allows travici to use different protoc executable
+system_protoc_exe=`which protoc`
+PROTOC_EXE="${PROTOC_EXE:-${system_protoc_exe}}"
+
+$PROTOC_EXE -I test/support/proto3 --include_source_info=true --descriptor_set_out=./test/support/build/types-proto3.build `find test/support/proto3/ -name \*.proto`
+$PROTOC_EXE -I test/support/proto2 --include_source_info=true --descriptor_set_out=./test/support/build/types-proto2.build `find test/support/proto2/ -name \*.proto`
