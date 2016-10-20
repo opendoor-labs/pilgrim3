@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 
 bin/bundle_js
-test/support/proto3/compile
+test/support/bin/compile
 python setup.py test

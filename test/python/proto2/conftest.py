@@ -1,5 +1,6 @@
-from pytest import fixture
 import os
+from pytest import fixture
+from test.python.shared.conftest import *
 
 
 @fixture(scope="module")
