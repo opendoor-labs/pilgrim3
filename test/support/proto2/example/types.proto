@@ -39,7 +39,7 @@ enum ExampleEnum {
 message ExampleNestingScope {
     /* nested-message-comment */
     message ExampleNestedMessage {
-        /* nested-message-field-comment */
+        /* nested-message-field[0]-comment */
         optional string field = 1;
 
         /* nested-message-oneof-comment */
@@ -49,6 +49,9 @@ message ExampleNestingScope {
           /* nested-message-oneof-field[1]-comment */
           string field3 = 3;
         }
+
+        /* nested-message-field[1]-comment */
+        optional ExampleMessage field4 = 4;
     }
 
     /* nested-enum-comment */

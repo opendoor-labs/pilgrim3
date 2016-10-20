@@ -30,10 +30,11 @@ def message_proto_comment(request):
 
 @fixture(params=[
     ("nested-message-comment"),
-    ("nested-message-field-comment"),
+    ("nested-message-field[0]-comment"),
     ("nested-message-oneof-comment"),
     ("nested-message-oneof-field[0]-comment"),
     ("nested-message-oneof-field[1]-comment"),
+    ("nested-message-field[1]-comment"),
 ])
 def nested_message_proto_comment(request):
     yield request.param
