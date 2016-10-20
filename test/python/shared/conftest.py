@@ -30,10 +30,11 @@ def message_proto_comment(request):
 
 @fixture(params=[
     ("nested-message-comment"),
-    ("nested-message-field-comment"),
+    ("nested-message-field[0]-comment"),
     ("nested-message-oneof-comment"),
     ("nested-message-oneof-field[0]-comment"),
     ("nested-message-oneof-field[1]-comment"),
+    ("nested-message-field[1]-comment"),
 ])
 def nested_message_proto_comment(request):
     yield request.param
@@ -102,37 +103,37 @@ def types_file_url():
 
 @fixture
 def example_message_url():
-    yield '/#/messages/example.ExampleMessage'
+    yield '/#/messages/.example.ExampleMessage'
 
 
 @fixture
 def example_nested_message_url():
-    yield '/#/messages/example.ExampleNestingScope.ExampleNestedMessage'
+    yield '/#/messages/.example.ExampleNestingScope.ExampleNestedMessage'
 
 
 @fixture
 def example_recursive_message_url():
-    yield '/#/messages/example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveMessoge '
+    yield '/#/messages/.example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveMessage'
 
 
 @fixture
 def example_enum_url():
-    yield '#/enums/example.ExampleEnum'
+    yield '#/enums/.example.ExampleEnum'
 
 
 @fixture
 def example_nested_enum_url():
-    yield '/#/enums/example.ExampleNestingScope.ExampleNestedEnum'
+    yield '/#/enums/.example.ExampleNestingScope.ExampleNestedEnum'
 
 
 @fixture
 def example_recursive_enum_url():
-    yield '/#/enums/example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveEnum'
+    yield '/#/enums/.example.ExampleNestingScope.RecursiveProvingScope.ExampleRecursiveEnum'
 
 
 @fixture
 def example_service_url():
-    yield '#/services/example.ExampleService'
+    yield '#/services/.example.ExampleService'
 
 
 @fixture
