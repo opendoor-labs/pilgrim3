@@ -9,6 +9,10 @@ Pilgrim 3 is a simply python server that runs on you local machine, against your
 
 ## Installation
 
+Cautious: there're conflict between pilgrim3 and od_protos. Make sure to create seperate conda env between them. 
+``` conda create --name pilgrim python=3.6 --yes```
+
+
 ```sh
 pip install pilgrim3
 ```
