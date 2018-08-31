@@ -7,3 +7,4 @@ pilgrim3.egg-info/
 bundle.js
 .eggs
 .cache
+*.pyc
