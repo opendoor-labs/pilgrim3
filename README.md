@@ -23,14 +23,14 @@ python setup.py install
 
 ### Proto3
 
-Generate your protos as normal. The only difference is that you should add a couple of flags to your protoc invoation.
+Generate your protos as normal. The only difference is that you should add a couple of flags to your protoc invocation.
 
 * `--include_source_info` - This tells protoc to generate a serialized proto that includes documentation.
 * `-o./proto_bundle` - The output file should be called `proto_bundle` and needs to live in the directory where you'll invoke pilgrim from.
 * Run pilgrim3
 
 ```sh
-protoc -Imy_protos --ruby_out=./app/protos --include_source_info -o./proto_bundle ./protos/my_protos.proto
+protoc -Imy_protos --include_source_info -o./proto_bundle ./protos/my_protos.proto
 ```
 
 The option for `-o` will output a serialized proto description of your protos. Very meta. The `--include_source_info` option tells protoc to include the source documentation. Pilgrim3 uses this output to provide you with explorable documentation.
@@ -44,7 +44,7 @@ Stage 1
 Compile your protos as normal
 
 ```sh
-protoc -Imy_protos --ruby_out=./app/protos ./protos/my_protos.proto
+protoc -Imy_protos ./protos/my_protos.proto
 ```
 
 Stage 2
@@ -91,7 +91,10 @@ python -m pilgrim3.scripts.run pilgrim3/scripts/run.py --proto-bundle=path-to-pr
 
 ### Running Tests
 
+```sh
+./test/support/bin/compile # compile test protos
 python setup.py test
+```
 
 There is a hello-world proto bundle to practice at at `dev/proto3/pilgrim-bundle`
 
