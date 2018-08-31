@@ -146,6 +146,7 @@ function fileDocs(file, locs) {
 function attachDocs(thing, docs) {
   if (!docs) return;
   let docString = thing.documentation || '';
+
   forEach(docs.leadingDetachedComments, (cmt) => {
     docString = `${docString}\n${cmt}`;
   });
@@ -153,10 +154,6 @@ function attachDocs(thing, docs) {
   if (docs.leadingComments) {
     docString = `${docString}\n${docs.leadingComments}`;
   }
-
-  forEach(docs.trailingComments, (cmt) => {
-    docString = `${docString}\n${cmt}`;
-  });
 
   if (docString) thing.documentation = docString;
 }
