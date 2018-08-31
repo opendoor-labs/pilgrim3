@@ -5,6 +5,10 @@ syntax = "proto2";
 
 package example;
 
+/* detached block comment should be ignored */
+
+// detached line comment should be ignored
+
 /* message-comment */
 message ExampleMessage {
     /* message-field-comment */
@@ -87,6 +91,16 @@ message ExampleNestingScope {
         }
     }
 }
+
+// line-comment
+message ExampleLineCommentMessage {}
+
+// multi-line-title
+//
+// multi-
+// line-
+// comments
+service ExampleMultiLineCommentService {}
 
 /* service-comment */
 service ExampleService {

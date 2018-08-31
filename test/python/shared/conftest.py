@@ -7,8 +7,8 @@ from test.python.navigator import Navigator
 @fixture(params=[
     ("file-comment"),
     ("Enums (1)"),
-    ("Services (1)"),
-    ("Messages (2)"),
+    ("Services (2)"),
+    ("Messages (3)"),
 ])
 def file_proto_comment(request):
     yield request.param
@@ -79,6 +79,21 @@ def recursive_enum_proto_comment(request):
 
 
 @fixture(params=[
+    ('line-comment'),
+])
+def line_comment(request):
+    yield request.param
+
+
+@fixture(params=[
+    ('multi-line-title'),
+    ('multi- line- comments'),
+])
+def multiline_comment(request):
+    yield request.param
+
+
+@fixture(params=[
     ("service-comment"),
     ("action-comment"),
 ])
@@ -132,6 +147,16 @@ def example_recursive_enum_url():
 
 
 @fixture
+def example_line_comment_message_url():
+    yield '#/messages/.example.ExampleLineCommentMessage'
+
+
+@fixture
+def example_multiline_comment_service_url():
+    yield '#/services/.example.ExampleMultiLineCommentService'
+
+
+@fixture
 def example_service_url():
     yield '#/services/.example.ExampleService'
 
@@ -182,6 +207,18 @@ def nested_enum_proto_page(navigator, example_nested_enum_url):
 @memoize
 def recursive_enum_proto_page(navigator, example_recursive_enum_url):
     yield navigator.get_page(example_recursive_enum_url)
+
+
+@fixture
+@memoize
+def line_comment_page(navigator, example_line_comment_message_url):
+    yield navigator.get_page(example_line_comment_message_url)
+
+
+@fixture
+@memoize
+def multiline_comment_page(navigator, example_multiline_comment_service_url):
+    yield navigator.get_page(example_multiline_comment_service_url)
 
 
 @fixture(autouse=True, scope="module")
